@@ -1,0 +1,33 @@
+input[type=file] {
+    display:block;
+    height:0;
+    width:0;
+}
+
+#wrapper {
+    border: 1px solid #333;
+    width:1250px;
+    height:155px;
+
+}
+#div1 {
+    display: inline-block;
+    border: 1px solid #333;
+    width:430px;
+    height:150px;
+    vertical-align: top;
+}
+#div2 {
+    display: inline-block;
+    border: 1px solid #333;
+    width: 350px;
+    height:150px;
+    vertical-align: top;
+}
+#div3 {
+    display: inline-block;
+    border: 1px solid #333;
+    width: 350px;
+    height:150px;
+    vertical-align: top;
+}
