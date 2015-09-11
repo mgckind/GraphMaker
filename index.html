@@ -115,7 +115,8 @@ Name: <input type="text" name="Lname">
 <button onclick="saveitas()"> Save as ...</button>
 <!--<button onclick="clearit()"> Clear</button>-->
 <button id ="openfile" > Load</button>
-<input type="file" id="theFile" onchange="openit(this.value);"/>
+<input type="file" id="theFile"/>
+
 
 
 <hr>
@@ -147,7 +148,9 @@ papersmall.$el.css('pointer-events', 'none');
 $("#openfile").click(function(){
     $("#theFile").click();
 });
-   // Load it automatically
+document.getElementById('theFile').addEventListener('change', onFileChange);
+
+// Load it automatically
 //$(document).ready(function () {
 //readit(graph);
 //});

@@ -1,3 +1,14 @@
+function onFileChange(event) {
+        var reader = new FileReader();
+        reader.onload = onReaderLoad;
+        reader.readAsText(event.target.files[0]);
+    };
+
+   function onReaderLoad(event){
+        var graphObj = JSON.parse(event.target.result);
+        graph.clear();
+        graph.fromJSON(graphObj);
+    }
 
 
 function readit() {
