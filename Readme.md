@@ -2,6 +2,9 @@
 
 A little graph manipulation tool written in javascript, based heavily in joint.js. Still under development
 
+## Live Demo
+[Here](http://mgckind.pythonanywhere.com/) you can see a live demo!
+
 ## Requirements
 
 - [Phantom.js](http://phantomjs.org/)
@@ -10,9 +13,13 @@ A little graph manipulation tool written in javascript, based heavily in joint.j
 
 ## Use
 
-Run a server, with for example python :
+Run a server, with for example in python 2.* :
 
     python -m SimpleHTTPServer
+
+Or in python 3.* :
+
+    python3 -m http.server
 
 and go to: http://localhost:8000/
 
