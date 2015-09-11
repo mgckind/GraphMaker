@@ -73,6 +73,8 @@ joint.shapes.tm.ActorView = joint.shapes.tm.ToolElementView;
 
 function onCreateButtonClick(){
   var cname = document.forms["NewCell"]["fname"].value;
+  var charL = cname.length;
+  console.log(charL);
   //var clink = javaScript:void(0);
   var clink = document.forms["NewCell"]["flink"].value;
 
@@ -88,7 +90,7 @@ if (cellkind == 3) { var cellcolor =  "#6495ED";}
 
 var actor = new joint.shapes.tm.Actor({
     position: {x:0, y:0},
-    size: { width: 200, height: 40 },
+    size: { width: Math.max(charL*8,45), height: 40 },
     attrs: { rect: { fill: ' #333', stroke : cellcolor, 'stroke-width': 3 }, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
              text: { text: cname,  fill: '#fff' } }
@@ -96,7 +98,7 @@ var actor = new joint.shapes.tm.Actor({
 
 var actor_d = new joint.shapes.tm.Actor({
     position: {x:0, y:0},
-    size: { width: 200, height: 40 },
+    size: { width: Math.max(charL*8,45), height: 40 },
     attrs: { rect: { fill: ' #333', stroke : cellcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
              text: { text: cname,  fill: '#fff' } }

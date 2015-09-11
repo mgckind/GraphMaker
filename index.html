@@ -155,8 +155,67 @@ document.getElementById('theFile').addEventListener('change', onFileChange);
 //readit(graph);
 //});
 
-graph.on('all', function(eventName, cell) {
-    console.log(arguments);
+//graph.on('all', function(eventName, cell) {
+//    console.log(arguments);
+//});
+
+var x00 = 0;
+var y00 = 0;
+var resize00 = false;
+
+var actor0 = new joint.shapes.tm.Actor({
+    position: {x:0, y:0},
+    size: { width: 200, height: 200 },
+    attrs: { rect: { fill: ' #333', stroke : 'yellow', 'stroke-width': 3 }, 
+        a: { cursor: 'pointer' } }
+});
+actor0.prop({ name: { text: 'Big' } })
+
+
+paper.on('cell:pointerdown', function(element, ev, x,y) {
+    var cell = element.model;
+    //cell.highlight();
+    var pos=cell.get('position');
+    x00 = pos.x;
+    y00 = pos.y;
+    var size=cell.get('size');
+    console.log(cell.id, ':', cell.prop('name/text'));
+    if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Big')) {
+        console.log('Corner!');
+        resize00 = true;
+    }
+    else {
+    
+        resize00 = false;
+    }
+
+});
+
+//graph.addCell([actor0]);
+
+
+paper.on('blank:pointerdown', function(evt,  x, y) {
+    actor0.position(x,y);
+    //graph.addCell([actor0]);
+    console.log(evt.pageX);
+    //var cell = element.model;
+    //element.highlight([cell]);
+    //cell.remove();
+
+ //console.log(cell.id, ':', cell.get('position'));
+    //element.rotate(5);
+});
+
+paper.on('cell:pointermove', function(element,eve,x,y) {
+    var cell = element.model;
+    //cell.highlight();
+    var pos=cell.get('position');
+    if (resize00){
+        cell.position(x00,y00);
+        cell.resize(x-x00, y-y00);
+    }
+    //console.log(cell.id, ':', cell.get('position'), x,y);
+
 });
 
 </script>
