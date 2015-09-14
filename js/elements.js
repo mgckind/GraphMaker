@@ -90,23 +90,63 @@ if (cellkind == 3) { var cellcolor =  "#6495ED";}
 
 var actor = new joint.shapes.tm.Actor({
     position: {x:0, y:0},
-    size: { width: Math.max(charL*8,45), height: 40 },
-    attrs: { rect: { fill: ' #333', stroke : cellcolor, 'stroke-width': 3 }, 
+    size: { width: Math.max(charL*10,45), height: 40 },
+    attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3 }, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
              text: { text: cname,  fill: '#fff' } }
 });
 
 var actor_d = new joint.shapes.tm.Actor({
     position: {x:0, y:0},
-    size: { width: Math.max(charL*8,45), height: 40 },
-    attrs: { rect: { fill: ' #333', stroke : cellcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
+    size: { width: Math.max(charL*10,45), height: 40 },
+    attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
              text: { text: cname,  fill: '#fff' } }
 });
 
   //console.log(cellkind);
-  if (celldashed) {graph.addCell([actor_d]);}
-  else {graph.addCell([actor]);}
+  if (celldashed) {
+    actor_d.prop({ name: { text: 'Cell' } });
+    graph.addCell([actor_d]);
+  }
+  else {
+    actor.prop({ name: { text: 'Cell' } });
+    graph.addCell([actor]);
+  }
+};
+
+
+function onCreateGroup(){
+  var celldashed = document.getElementById("iscelldashed").checked;
+   
+
+var actor = new joint.shapes.tm.Actor({
+    position: {x:0, y:0},
+    size: { width: 150, height: 150 },
+    attrs: { rect: { fill: 'transparent', stroke : 'yellow', 'stroke-width': 3 }, 
+        a: { cursor: 'pointer' },
+           }
+});
+
+var actor_d = new joint.shapes.tm.Actor({
+    position: {x:0, y:0},
+    size: { width: 150, height: 150 },
+    attrs: { rect: { fill: 'transparent', stroke : 'yellow', 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
+        a: { cursor: 'pointer' },
+       }
+});
+
+
+
+  //console.log(cellkind);
+  if (celldashed) {
+    actor_d.prop({ name: { text: 'Group' } });
+    graph.addCell([actor_d]);
+  }
+  else {
+    actor.prop({ name: { text: 'Group' } });
+    graph.addCell([actor]);
+  }
 };
 
 
@@ -169,17 +209,20 @@ function onCreateLinkClick(){
    //cell_d.attr({ '.marker-source': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
    //cell_d.attr({ '.marker-target': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
 
-
-
-
     if (dashed) { 
         cell_d.set('smooth' , true);
+        cell_d.prop({ name: { text: 'Link' } });
         graph.addCell(cell_d);
         }
     else {
+        
         cell.set('smooth' , true);
+        cell.prop({ name: { text: 'Link' } });
         graph.addCell(cell);
 
     }
 };
+
+
+
 

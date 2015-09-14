@@ -12,6 +12,8 @@ body {
 <link rel="stylesheet" type="text/css" href="css/style.css" />
 <link rel="stylesheet" type="text/css" href="css/mycss.css" />
 <script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/lodash.min.js"></script>
+<script type="text/javascript" src="js/backbone-min.js"></script>
 <script type="text/javascript" src="js/joint.js"></script>
 <script type="text/javascript" src="js/joint.shapes.devs.min.js"></script>
 <script type="text/javascript" src="js/FileSaver.js"></script>
@@ -39,24 +41,33 @@ URL: <input type="text" name="flink" value="" >
 <br>
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}"></rect>
-  <text x="25" y="25"  fill="#fff" onclick="if (validateCell()) { cellkind = 1; document.NewCell.submit();}"> Create </text>
+  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) { cellkind = 1; document.NewCell.submit();}"> Create </text>
 </g>
 </svg>
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"></rect>
-  <text x="25" y="25"  fill="#fff" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"> Create </text>
+  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"> Create </text>
 </g>
 </svg>
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"></rect>
-  <text x="25" y="25"  fill="#fff" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"> Create </text>
+  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"> Create </text>
 </g>
 </svg>
+<br>
+Create variable group cell<br>
+<svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
+<g>
+  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup();"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup();"> Group </text>
+</g>
+</svg>
+
 </div>
 <div id = "div2">
 
@@ -124,6 +135,7 @@ Name: <input type="text" name="Lname">
 
 <script>
 
+
 var graph = new joint.dia.Graph;
 var paper = new joint.dia.Paper({
     el: $('#myholder'),
@@ -158,29 +170,30 @@ document.getElementById('theFile').addEventListener('change', onFileChange);
 //graph.on('all', function(eventName, cell) {
 //    console.log(arguments);
 //});
-/*
+
 var x00 = 0;
 var y00 = 0;
 var resize00 = false;
 
-var actor0 = new joint.shapes.tm.Actor({
-    position: {x:0, y:0},
-    size: { width: 200, height: 200 },
-    attrs: { rect: { fill: ' #333', stroke : 'yellow', 'stroke-width': 3 }, 
-        a: { cursor: 'pointer' } }
-});
-actor0.prop({ name: { text: 'Big' } })
-
 
 paper.on('cell:pointerdown', function(element, ev, x,y) {
     var cell = element.model;
-    //cell.highlight();
+      if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') )  {
     var pos=cell.get('position');
     x00 = pos.x;
     y00 = pos.y;
     var size=cell.get('size');
-    console.log(cell.id, ':', cell.prop('name/text'));
-    if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Big')) {
+    //console.log(cell.id, ':', cell.prop('name/text'));
+
+    if (!cell.get('embeds') || cell.get('embeds').length === 0) {
+        cell.toFront();
+    }
+    
+    if (cell.get('parent')) {
+        graph.getCell(cell.get('parent')).unembed(cell);
+    }
+
+    if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
         console.log('Corner!');
         resize00 = true;
     }
@@ -188,27 +201,13 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
     
         resize00 = false;
     }
+}
 
 });
 
-//graph.addCell([actor0]);
-
-
-paper.on('blank:pointerdown', function(evt,  x, y) {
-    actor0.position(x,y);
-    //graph.addCell([actor0]);
-    console.log(evt.pageX);
-    //var cell = element.model;
-    //element.highlight([cell]);
-    //cell.remove();
-
- //console.log(cell.id, ':', cell.get('position'));
-    //element.rotate(5);
-});
 
 paper.on('cell:pointermove', function(element,eve,x,y) {
     var cell = element.model;
-    //cell.highlight();
     var pos=cell.get('position');
     if (resize00){
         cell.position(x00,y00);
@@ -217,7 +216,42 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
     //console.log(cell.id, ':', cell.get('position'), x,y);
 
 });
-*/
+
+
+paper.on('cell:pointerup', function(element,eve,x,y) {
+    var cell = element.model;
+    if (cell.prop('name/text') == 'Cell')  {
+        var cellViewsBelow = paper.findViewsFromPoint(cell.getBBox().center());
+
+         if (cellViewsBelow.length) {
+        // Note that the findViewsFromPoint() returns the view for the `cell` itself.
+        var cellViewBelow = _.find(cellViewsBelow, function(c) { return c.model.id !== cell.id });
+    
+        // Prevent recursive embedding.
+        if (cellViewBelow && cellViewBelow.model.get('parent') !== cell.id) {
+            cellViewBelow.model.embed(cell);
+        }
+    }
+    }
+    resize00 = false;
+
+    if (cell.prop('name/text') == 'Group' )  {
+    var inside= graph.findModelsUnderElement(cell);
+     console.log(cell.getBBox(), inside.length );
+     if (inside.length > 0) {
+        for (i = 0; i < inside.length; i++) { 
+             if (inside[i].get('parent') !== cell.id){
+             cell.embed(inside[i]);
+             //inside[i].toFront();
+                    }
+            }
+            cell.toBack();
+        }
+   }
+
+});
+
+
 </script>
 </body>
 </html>
