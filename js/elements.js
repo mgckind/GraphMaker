@@ -118,15 +118,18 @@ var actor_d = new joint.shapes.tm.Actor({
 };
 
 
-function onCreateGroup(){
+function onCreateGroup(gg){
   graph0.clear();
   var celldashed = document.getElementById("iscelldashed").checked;
    
 
+if (gg==1) { var gcolor =  "yellow";}
+if (gg==2) { var gcolor =  "#C974FF";}
+
 var actor = new joint.shapes.tm.Actor({
     position: {x:80, y:10},
     size: { width: 140, height: 100 },
-    attrs: { rect: { fill: 'transparent', stroke : 'yellow', 'stroke-width': 3 }, 
+    attrs: { rect: { fill: 'transparent', stroke : gcolor, 'stroke-width': 3 }, 
         a: { cursor: 'pointer' },
            }
 });
@@ -134,7 +137,7 @@ var actor = new joint.shapes.tm.Actor({
 var actor_d = new joint.shapes.tm.Actor({
     position: {x:80, y:10},
     size: { width: 140, height: 100 },
-    attrs: { rect: { fill: 'transparent', stroke : 'yellow', 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
+    attrs: { rect: { fill: 'transparent', stroke : gcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
         a: { cursor: 'pointer' },
        }
 });
@@ -151,12 +154,12 @@ var actor_d = new joint.shapes.tm.Actor({
     graph0.addCell([actor]);
   }
 
-  document.getElementById("mytext").innerHTML = "INFO: Drag this group cell below. Use Bottom-right corner to rescale.  <br/> Move on top of cells or move cells inside to embed content.";
+  document.getElementById("mytext").innerHTML = "INFO: Drag this group cell below. Use all corners but top-left to rescale.  <br/> Move on top of cells or move cells inside to embed content.";
 };
 
 
 
-function onCreateLinkClick(){
+function onCreateLinkClick(lc){
   graph0.clear();
   var Lname = document.forms["NewLink"]["Lname"].value;
 
@@ -165,16 +168,25 @@ function onCreateLinkClick(){
 
   var dashed = document.getElementById("isdashed").checked;
 
+  if (lc==1) {
+    var linecolor = "#bf5600";
+    var textcolor = "#bfac00";
+  }
+  if (lc ==2){
+    var linecolor = "#7FFFD4"//"#bf5600";
+    var textcolor = "#FF80AA" //"#bfac00";
+  }
+
    var cell = new joint.dia.Link({
         //source: { x:ww, y:hh*0.1 },
         //target: { x: ww*2, y:hh },
         source: { x:70, y:50 },
         target: { x: 230, y:70 },
         labels: [{ position: .5, attrs: { 
-            text: { text: Lname , 'font-weight': 'bold' , fill: '#bfac00'},
+            text: { text: Lname , 'font-weight': 'bold' , fill: textcolor},
             rect : {fill : '#333'} } }],
         attrs: { 
-        '.connection': { 'stroke-width': 3, stroke: '#bf5600' },
+        '.connection': { 'stroke-width': 3, stroke: linecolor },
                 },
 
     });
@@ -183,10 +195,10 @@ function onCreateLinkClick(){
         source: { x:70, y:50 },
         target: { x: 230, y:70 },
         labels: [{ position: .5, attrs: { 
-            text: { text: Lname , 'font-weight': 'bold' , fill: '#bfac00'},
+            text: { text: Lname , 'font-weight': 'bold' , fill: textcolor},
             rect : {fill : '#333'} } }],
         attrs: { 
-        '.connection': { 'stroke-width': 3, stroke: '#bf5600', 'stroke-dasharray' : "5 5" },
+        '.connection': { 'stroke-width': 3, stroke: linecolor, 'stroke-dasharray' : "5 5" },
                 },
 
     });
@@ -194,20 +206,20 @@ function onCreateLinkClick(){
    
   if (dashed) {
     if (linkkind == 1) {
-        cell_d.attr({ '.marker-target': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
+        cell_d.attr({ '.marker-target': {fill: linecolor, stroke: linecolor, d: 'M 10 0 L 0 5 L 10 10 z'}});
         }
     if (linkkind == 2) {
-      cell_d.attr({ '.marker-source': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
-      cell_d.attr({ '.marker-target': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
+      cell_d.attr({ '.marker-source': {fill: linecolor, stroke: linecolor, d: 'M 10 0 L 0 5 L 10 10 z'}});
+      cell_d.attr({ '.marker-target': {fill: linecolor, stroke: linecolor, d: 'M 10 0 L 0 5 L 10 10 z'}});
        }
        }
     else {
         if (linkkind == 1) {
-        cell.attr({ '.marker-target': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
+        cell.attr({ '.marker-target': {fill: linecolor, stroke: linecolor, d: 'M 10 0 L 0 5 L 10 10 z'}});
         }
     if (linkkind == 2) {
-      cell.attr({ '.marker-source': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
-      cell.attr({ '.marker-target': {fill: '#bf5600', stroke: '#bf5600', d: 'M 10 0 L 0 5 L 10 10 z'}});
+      cell.attr({ '.marker-source': {fill: linecolor, stroke: linecolor, d: 'M 10 0 L 0 5 L 10 10 z'}});
+      cell.attr({ '.marker-target': {fill: linecolor, stroke: linecolor, d: 'M 10 0 L 0 5 L 10 10 z'}});
        }
 
 

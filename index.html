@@ -23,6 +23,7 @@ body {
 
 <script>
 var linkkind=1;
+var linkcolor=1;
 var cellkind = 1;
 var saved = true;
 </script>
@@ -78,8 +79,15 @@ URL: <input type="text" name="flink" value="" >
 Create variable group cell<br>
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" id="group1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup();"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup();"> Group </text>
+  <rect x="0" y ="0" id="group1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup(1);"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(1);"> Group </text>
+</g>
+</svg>
+
+<svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
+<g>
+  <rect x="0" y ="0" id="group2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #C974FF" onclick="onCreateGroup(2);"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(2);"> Group </text>
 </g>
 </svg>
 
@@ -87,7 +95,7 @@ Create variable group cell<br>
 <div id = "div2">
 
 Add Links (click on arrows)
-<form name="NewLink" action="javascript:onCreateLinkClick();" method="post">
+<form name="NewLink" action="javascript:onCreateLinkClick(linkcolor);" method="post">
 Name: <input type="text" name="Lname">
 <input type="checkbox" name="style" value="dashed" id="isdashed">dashed
 </form>
@@ -107,7 +115,7 @@ Name: <input type="text" name="Lname">
     </marker>
 </defs>
   <g>
-    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; document.NewLink.submit();"></rect>
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; linkcolor=1; document.NewLink.submit();"></rect>
     <line x1="10" y1="25" x2="80" y2="25" id="arrow1" style="stroke:#bf5600;stroke-width:3;marker-end: url(#markerArrow);" />
   </g>
 </svg>
@@ -115,18 +123,51 @@ Name: <input type="text" name="Lname">
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ;document.NewLink.submit();"></rect>
+    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ;linkcolor=1;document.NewLink.submit();"></rect>
     <line x1="10" y1="25" x2="80" y2="25" id="arrow2" style="stroke:#bf5600;stroke-width:3 ;marker-start: url(#markerArrow1); marker-end: url(#markerArrow); " />
   </g>
 </svg>
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ;document.NewLink.submit();"></rect>
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ;linkcolor=1;document.NewLink.submit();"></rect>
     <line x1="10" y1="25" x2="80" y2="25" id="arrow3" style="stroke:#bf5600;stroke-width:3 " />
   </g>
 </svg>
 
+ 
+<svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <marker id="markerbArrow1" markerWidth="13" markerHeight="13" refX="2" refY="3"
+           orient="auto">
+        <path  d="M6,0 L2,3 L6,6 L6,0" style="fill: #7FFFD4;" />
+    </marker>
+
+        <marker id="markerbArrow" markerWidth="13" markerHeight="13" refX="2" refY="3"
+           orient="auto">
+        <path  d="M2,0 L6,3 L2,6 L2,0" style="fill: #7FFFD4;" />
+    </marker>
+</defs>
+  <g>
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; linkcolor=2; document.NewLink.submit();"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="barrow1" style="stroke:#7FFFD4;stroke-width:3;marker-end: url(#markerbArrow);" />
+  </g>
+</svg>
+
+
+<svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ; linkcolor=2; document.NewLink.submit();"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="barrow2" style="stroke:#7FFFD4;stroke-width:3 ;marker-start: url(#markerbArrow1); marker-end: url(#markerbArrow); " />
+  </g>
+</svg>
+
+<svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ; linkcolor=2; document.NewLink.submit();"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="barrow3" style="stroke:#7FFFD4;stroke-width:3 " />
+  </g>
+</svg>
 
 </div>
 <div id="div3">
@@ -214,6 +255,8 @@ $('#iscelldashed').on('change', function() {
         cell3.style['stroke-dasharray']= "5 5";
         var group1 = document.getElementById("group1");
         group1.style['stroke-dasharray']= "5 5";
+        var group2 = document.getElementById("group2");
+        group2.style['stroke-dasharray']= "5 5";
     }
     else{
         var cell1 = document.getElementById("cell1");
@@ -224,6 +267,8 @@ $('#iscelldashed').on('change', function() {
         cell3.style['stroke-dasharray']= "0";
         var group1 = document.getElementById("group1");
         group1.style['stroke-dasharray']= "0";
+        var group2 = document.getElementById("group2");
+        group2.style['stroke-dasharray']= "0";
 
     }
 });
@@ -239,6 +284,12 @@ $('#isdashed').on('change', function() {
         arrow2.style['stroke-dasharray']= "5 5";
         var arrow3 = document.getElementById("arrow3");
         arrow3.style['stroke-dasharray']= "5 5";
+        var barrow1 = document.getElementById("barrow1");
+        barrow1.style['stroke-dasharray']= "5 5";
+        var barrow2 = document.getElementById("barrow2");
+        barrow2.style['stroke-dasharray']= "5 5";
+        var barrow3 = document.getElementById("barrow3");
+        barrow3.style['stroke-dasharray']= "5 5";
     }
     else{
         var arrow1 = document.getElementById("arrow1");
@@ -247,6 +298,12 @@ $('#isdashed').on('change', function() {
         arrow2.style['stroke-dasharray']= "0";
         var arrow3 = document.getElementById("arrow3");
         arrow3.style['stroke-dasharray']= "0";
+        var barrow1 = document.getElementById("barrow1");
+        barrow1.style['stroke-dasharray']= "0";
+        var barrow2 = document.getElementById("barrow2");
+        barrow2.style['stroke-dasharray']= "0";
+        var barrow3 = document.getElementById("barrow3");
+        barrow3.style['stroke-dasharray']= "0";
 
     }
 });
@@ -256,7 +313,10 @@ $('#isdashed').on('change', function() {
 
 var x00 = 0;
 var y00 = 0;
+var w00 = 0;
+var h00 = 0;
 var resize00 = false;
+var corner = 0;
 
 
 paper.on('cell:pointerdown', function(element, ev, x,y) {
@@ -266,6 +326,9 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
     x00 = pos.x;
     y00 = pos.y;
     var size=cell.get('size');
+    w00 = size.width;
+    h00 = size.height;
+
     //console.log(cell.id, ':', cell.prop('name/text'));
 
     if (!cell.get('embeds') || cell.get('embeds').length === 0) {
@@ -276,9 +339,36 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
         graph.getCell(cell.get('parent')).unembed(cell);
     }
 
+    if (cell.prop('name/text') == 'Group' )  {
+    var inside= graph.findModelsUnderElement(cell);
+     console.log(cell.getBBox(), inside.length );
+     if (inside.length > 0) {
+        for (i = 0; i < inside.length; i++) { 
+             if (inside[i].get('parent') !== cell.id){
+             cell.embed(inside[i]);
+             //inside[i].toFront();
+                    }
+            }
+            cell.toBack();
+        }
+   }
+
+
+
     if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
-        console.log('Corner!');
+        console.log('Corner0!', x, pos.x);
         resize00 = true;
+        corner = 0;
+    }
+    else if (((x-pos.x) < 20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
+        console.log('Corner1!');
+        resize00 = true;
+        corner = 1;
+    }
+    else if (((x-pos.x) > size.width-20) && ( (y-pos.y) < 20) &&  (cell.prop('name/text') == 'Group')) {
+        console.log('Corner3!');
+        resize00 = true;
+        corner = 3;
     }
     else {
     
@@ -292,9 +382,22 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
 paper.on('cell:pointermove', function(element,eve,x,y) {
     var cell = element.model;
     var pos=cell.get('position');
+    var inside= cell.getEmbeddedCells();
+
     if (resize00){
-        cell.position(x00,y00);
-        cell.resize(x-x00, y-y00);
+    for (i = 0; i < inside.length; i++) {
+        cell.unembed(inside[i]);
+    };
+        if (corner ==0){ 
+            cell.position(Math.min(x00,x),Math.min(y00,y));  
+            cell.resize(Math.abs(x-x00), Math.abs(y-y00));
+        }
+        if (corner ==1){
+            cell.position(Math.min(x,x00+w00),Math.min(y00,y));
+            cell.resize(Math.abs(x00+w00-x), Math.abs(y-y00));}
+        if (corner ==3){
+            cell.position(Math.min(x00,x),Math.min(y,y00+h00));
+            cell.resize(Math.abs(x-x00), Math.abs(y00+h00-y));}
     }
     //console.log(cell.id, ':', cell.get('position'), x,y);
 
@@ -303,7 +406,7 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
 
 paper.on('cell:pointerup', function(element,eve,x,y) {
     var cell = element.model;
-    if (cell.prop('name/text') == 'Cell')  {
+    if (cell.prop('name/text') == 'Cello')  {
         var cellViewsBelow = paper.findViewsFromPoint(cell.getBBox().center());
 
          if (cellViewsBelow.length) {
