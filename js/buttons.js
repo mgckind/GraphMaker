@@ -82,6 +82,7 @@ function saveitas(){
 };
 
 function pngit(){
+//V(paper.svg).remove(hrr);
 var svgDoc = paper.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);

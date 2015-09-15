@@ -31,6 +31,21 @@ var saved = true;
 <body>
 
 <div id="wrapper">
+
+<div id="div0">
+<button onclick="clearit()"> New graph</button><br>
+<button id ="openfile" > Load</button><br>
+<!--<button onclick="readit()"> Load</button>-->
+<button onclick="pngit()"> Save svg </button><br>
+<!--<button onclick="saveit()"> Save</button>-->
+
+<button onclick="saveitas()"> Save as ...</button><br>
+<!--<button onclick="clearit()"> Clear</button>-->
+
+<input type="file" id="theFile"/>
+
+</div>
+
 <div id="div1">
 Add Cells (click on color cell) 
 <form name="NewCell" action="javascript:onCreateButtonClick();" onsubmit="return validateCell()" method="post">
@@ -39,23 +54,23 @@ URL: <input type="text" name="flink" value="" >
 <input type="checkbox" name="stylecell" value="dashed" id="iscelldashed">dashed
 </form>
 <br>
-<svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
+<svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}"></rect>
+  <rect x="0" y ="0" id="cell1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}"></rect>
   <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) { cellkind = 1; document.NewCell.submit();}"> Create </text>
 </g>
 </svg>
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"></rect>
+  <rect x="0" y ="0" id="cell2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"></rect>
   <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"> Create </text>
 </g>
 </svg>
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"></rect>
+  <rect x="0" y ="0" id="cell3" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"></rect>
   <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"> Create </text>
 </g>
 </svg>
@@ -63,7 +78,7 @@ URL: <input type="text" name="flink" value="" >
 Create variable group cell<br>
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup();"></rect>
+  <rect x="0" y ="0" id="group1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup();"></rect>
   <text x="25" y="20"  fill="#fff" onclick="onCreateGroup();"> Group </text>
 </g>
 </svg>
@@ -92,8 +107,8 @@ Name: <input type="text" name="Lname">
     </marker>
 </defs>
   <g>
-    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" style="stroke:#bf5600;stroke-width:3;marker-end: url(#markerArrow);" />
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; document.NewLink.submit();"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="arrow1" style="stroke:#bf5600;stroke-width:3;marker-end: url(#markerArrow);" />
   </g>
 </svg>
 
@@ -101,14 +116,14 @@ Name: <input type="text" name="Lname">
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
     <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ;document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" style="stroke:#bf5600;stroke-width:3 ;marker-start: url(#markerArrow1); marker-end: url(#markerArrow); " />
+    <line x1="10" y1="25" x2="80" y2="25" id="arrow2" style="stroke:#bf5600;stroke-width:3 ;marker-start: url(#markerArrow1); marker-end: url(#markerArrow); " />
   </g>
 </svg>
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ;document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" style="stroke:#bf5600;stroke-width:3 " />
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ;document.NewLink.submit();"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="arrow3" style="stroke:#bf5600;stroke-width:3 " />
   </g>
 </svg>
 
@@ -118,34 +133,50 @@ Name: <input type="text" name="Lname">
 <div id="myholder-small"></div>
 </div>
 </div>
-
-<!--<button onclick="readit()"> Load</button>-->
-<button onclick="pngit()"> Save svg </button>
-<!--<button onclick="saveit()"> Save</button>-->
-<button onclick="clearit()"> New graph</button>
-<button onclick="saveitas()"> Save as ...</button>
-<!--<button onclick="clearit()"> Clear</button>-->
-<button id ="openfile" > Load</button>
-<input type="file" id="theFile"/>
-
-
-
 <hr>
-<div id="myholder"> </div>
+
+<div id="wrapper0">
+<div id="myholder0" style="border:1px solid white; width:300px"> </div>
+<div id="mytext">INFO: </div>
+</div>
+<hr>
+<div id="myholder"></div>
 
 <script>
-
-
 var graph = new joint.dia.Graph;
+var graph0 = new joint.dia.Graph;
+
 var paper = new joint.dia.Paper({
     el: $('#myholder'),
     interactive : true,
-    width: 1500,
+    width: 1800,
     //width: $(document).width(),
-    height: 1000,
+    height: 2000,
     model: graph,
     gridSize: 1
 });
+
+var paper0 = new joint.dia.Paper({
+    el: $('#myholder0'),
+    interactive : false,
+    width: 300,
+    //width: $(document).width(),
+    height: 120,
+    model: graph0,
+    gridSize: 1
+});
+
+
+
+var l1 = g.line(g.point(0, 100), g.point(1800, 100));
+var hrr = V('<line/>');
+hrr.attr({ 
+    x1:l1.start.x ,y1:l1.start.y, x2:l1.end.x, y2:l1.end.y, stroke:'white', 'stroke-width':"2px" 
+});
+//V(paper.viewport).append(hrr);
+//V(paper.svg).remove(hrr);
+
+
 
 var papersmall = new joint.dia.Paper({
     el: $('#myholder-small'),
@@ -170,6 +201,58 @@ document.getElementById('theFile').addEventListener('change', onFileChange);
 //graph.on('all', function(eventName, cell) {
 //    console.log(arguments);
 //});
+
+
+$('#iscelldashed').on('change', function() { 
+    // From the other examples
+    if (this.checked) {
+        var cell1 = document.getElementById("cell1");
+        cell1.style['stroke-dasharray']= "5 5";
+        var cell2 = document.getElementById("cell2");
+        cell2.style['stroke-dasharray']= "5 5";
+        var cell3 = document.getElementById("cell3");
+        cell3.style['stroke-dasharray']= "5 5";
+        var group1 = document.getElementById("group1");
+        group1.style['stroke-dasharray']= "5 5";
+    }
+    else{
+        var cell1 = document.getElementById("cell1");
+        cell1.style['stroke-dasharray']= "0";
+        var cell2 = document.getElementById("cell2");
+        cell2.style['stroke-dasharray']= "0";
+        var cell3 = document.getElementById("cell3");
+        cell3.style['stroke-dasharray']= "0";
+        var group1 = document.getElementById("group1");
+        group1.style['stroke-dasharray']= "0";
+
+    }
+});
+
+
+
+$('#isdashed').on('change', function() { 
+    // From the other examples
+    if (this.checked) {
+        var arrow1 = document.getElementById("arrow1");
+        arrow1.style['stroke-dasharray']= "5 5";
+        var arrow2 = document.getElementById("arrow2");
+        arrow2.style['stroke-dasharray']= "5 5";
+        var arrow3 = document.getElementById("arrow3");
+        arrow3.style['stroke-dasharray']= "5 5";
+    }
+    else{
+        var arrow1 = document.getElementById("arrow1");
+        arrow1.style['stroke-dasharray']= "0";
+        var arrow2 = document.getElementById("arrow2");
+        arrow2.style['stroke-dasharray']= "0";
+        var arrow3 = document.getElementById("arrow3");
+        arrow3.style['stroke-dasharray']= "0";
+
+    }
+});
+
+
+
 
 var x00 = 0;
 var y00 = 0;
@@ -250,6 +333,52 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
    }
 
 });
+
+
+paper0.on('cell:pointerup',function (element, evt, x, y) {
+        var cell = element.model;
+        cell2 = cell.clone();
+        if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
+        cell2.position(x,y-130);
+        }
+        else {
+        cell2.set('source', { x: x, y: y-130 });
+        cell2.set('target', { x: x+160, y: y-130+20 });
+        }
+        graph.addCells([cell2]);
+        $( ".box" ).remove();
+        graph0.clear();
+        document.getElementById("mytext").innerHTML = "INFO:"
+    });
+
+ paper0.on('cell:pointerdown',function (element, evt, x, y) {
+        var cell = element.model;
+        cell3 = cell.clone();
+        $('body').append('<div id="tempPaper" class="box" style="position: fixed;z-index: 100;display:block;opacity:.7;"></div>');
+        var graph3 = new joint.dia.Graph;
+        var paper3 = new joint.dia.Paper({
+            el: $('#tempPaper'),
+            width: 300,
+            height: 120,
+            model: graph3,
+            gridSize: 1
+        });
+        if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
+        cell3.position(0,0);
+        }
+        else {
+        cell3.set('source', { x: 0, y: 0 });
+        cell3.set('target', { x: 160, y: 20 });
+        }
+        graph3.addCells([cell3]);
+        $('body').mousemove(function(e){
+            var mouseX   =  e.pageX; //get mouse move position
+            var mouseY   =  e.pageY;
+            $( "div.box" ).offset({ top: mouseY, left: mouseX });
+            // $('div.box',this).css({'top': boxPositionY,'left': boxPositionX})
+        });
+
+    });
 
 
 </script>

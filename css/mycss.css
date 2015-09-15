@@ -6,14 +6,26 @@ input[type=file] {
 
 #wrapper {
     border: 1px solid #333;
-    width:1250px;
+    width:1300px;
     height:155px;
 
 }
+
+#div0 {
+    display: inline-block;
+    border: 1px solid #333;
+    border-right: 2px solid white;
+    width:80px;
+    height:155px;
+    vertical-align: top;
+}
+
+
 #div1 {
     display: inline-block;
     border: 1px solid #333;
     width:430px;
+    border-right: 2px solid white;
     height:150px;
     vertical-align: top;
 }
@@ -21,6 +33,7 @@ input[type=file] {
     display: inline-block;
     border: 1px solid #333;
     width: 350px;
+    border-right: 2px solid white;
     height:150px;
     vertical-align: top;
 }
@@ -29,5 +42,23 @@ input[type=file] {
     border: 1px solid #333;
     width: 350px;
     height:150px;
+    vertical-align: top;
+}
+
+#wrapper0 {
+    border: 1px solid #333;
+    width:1300px;
+    height:130px;
+
+}
+
+#myholder0 {
+    display: inline-block;
+    position: relative;
+    left:0px;
+}
+
+#mytext{
+    display: inline-block;
     vertical-align: top;
 }

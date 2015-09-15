@@ -72,6 +72,7 @@ joint.shapes.tm.ToolElementView = joint.dia.ElementView.extend({
 joint.shapes.tm.ActorView = joint.shapes.tm.ToolElementView;
 
 function onCreateButtonClick(){
+  graph0.clear();
   var cname = document.forms["NewCell"]["fname"].value;
   var charL = cname.length;
   console.log(charL);
@@ -89,7 +90,7 @@ if (cellkind == 3) { var cellcolor =  "#6495ED";}
 
 
 var actor = new joint.shapes.tm.Actor({
-    position: {x:0, y:0},
+    position: {x:(300-(Math.max(charL*10,45)))/2, y:40},
     size: { width: Math.max(charL*10,45), height: 40 },
     attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3 }, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
@@ -97,7 +98,7 @@ var actor = new joint.shapes.tm.Actor({
 });
 
 var actor_d = new joint.shapes.tm.Actor({
-    position: {x:0, y:0},
+    position: {x:(300-(Math.max(charL*10,45)))/2, y:40},
     size: { width: Math.max(charL*10,45), height: 40 },
     attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
@@ -107,30 +108,32 @@ var actor_d = new joint.shapes.tm.Actor({
   //console.log(cellkind);
   if (celldashed) {
     actor_d.prop({ name: { text: 'Cell' } });
-    graph.addCell([actor_d]);
+    graph0.addCell([actor_d]);
   }
   else {
     actor.prop({ name: { text: 'Cell' } });
-    graph.addCell([actor]);
+    graph0.addCell([actor]);
   }
+  document.getElementById("mytext").innerHTML = "INFO: Drag this cell below. Move inside Group to embed. <br/> This cell does not re-scale.";
 };
 
 
 function onCreateGroup(){
+  graph0.clear();
   var celldashed = document.getElementById("iscelldashed").checked;
    
 
 var actor = new joint.shapes.tm.Actor({
-    position: {x:0, y:0},
-    size: { width: 150, height: 150 },
+    position: {x:80, y:10},
+    size: { width: 140, height: 100 },
     attrs: { rect: { fill: 'transparent', stroke : 'yellow', 'stroke-width': 3 }, 
         a: { cursor: 'pointer' },
            }
 });
 
 var actor_d = new joint.shapes.tm.Actor({
-    position: {x:0, y:0},
-    size: { width: 150, height: 150 },
+    position: {x:80, y:10},
+    size: { width: 140, height: 100 },
     attrs: { rect: { fill: 'transparent', stroke : 'yellow', 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
         a: { cursor: 'pointer' },
        }
@@ -141,17 +144,20 @@ var actor_d = new joint.shapes.tm.Actor({
   //console.log(cellkind);
   if (celldashed) {
     actor_d.prop({ name: { text: 'Group' } });
-    graph.addCell([actor_d]);
+    graph0.addCell([actor_d]);
   }
   else {
     actor.prop({ name: { text: 'Group' } });
-    graph.addCell([actor]);
+    graph0.addCell([actor]);
   }
+
+  document.getElementById("mytext").innerHTML = "INFO: Drag this group cell below. Use Bottom-right corner to rescale.  <br/> Move on top of cells or move cells inside to embed content.";
 };
 
 
 
 function onCreateLinkClick(){
+  graph0.clear();
   var Lname = document.forms["NewLink"]["Lname"].value;
 
   var hh = $(window).height()*0.15;
@@ -160,8 +166,10 @@ function onCreateLinkClick(){
   var dashed = document.getElementById("isdashed").checked;
 
    var cell = new joint.dia.Link({
-        source: { x:ww, y:hh*0.1 },
-        target: { x: ww*2, y:hh },
+        //source: { x:ww, y:hh*0.1 },
+        //target: { x: ww*2, y:hh },
+        source: { x:70, y:50 },
+        target: { x: 230, y:70 },
         labels: [{ position: .5, attrs: { 
             text: { text: Lname , 'font-weight': 'bold' , fill: '#bfac00'},
             rect : {fill : '#333'} } }],
@@ -172,8 +180,8 @@ function onCreateLinkClick(){
     });
 
    var cell_d = new joint.dia.Link({
-        source: { x:ww, y:hh*0.1 },
-        target: { x: ww*2, y:hh },
+        source: { x:70, y:50 },
+        target: { x: 230, y:70 },
         labels: [{ position: .5, attrs: { 
             text: { text: Lname , 'font-weight': 'bold' , fill: '#bfac00'},
             rect : {fill : '#333'} } }],
@@ -212,15 +220,16 @@ function onCreateLinkClick(){
     if (dashed) { 
         cell_d.set('smooth' , true);
         cell_d.prop({ name: { text: 'Link' } });
-        graph.addCell(cell_d);
+        graph0.addCell(cell_d);
         }
     else {
         
         cell.set('smooth' , true);
         cell.prop({ name: { text: 'Link' } });
-        graph.addCell(cell);
+        graph0.addCell(cell);
 
     }
+  document.getElementById("mytext").innerHTML = "INFO: Drag this link below, select endpoints and connect them to cells";
 };
 
 
