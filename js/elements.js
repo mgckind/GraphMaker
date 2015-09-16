@@ -16,6 +16,8 @@ joint.shapes.tm.toolElement = joint.shapes.basic.Generic.extend({
 
 });
 
+
+
 joint.shapes.tm.Actor = joint.shapes.tm.toolElement.extend({
 
     markup: '<g class="rotatable"><g class="scalable"><rect/><title class="tooltip"/></g><a><text/></a></g>',
@@ -29,6 +31,38 @@ joint.shapes.tm.Actor = joint.shapes.tm.toolElement.extend({
         },
         size: { width: 160, height: 80 }
     }, joint.shapes.tm.toolElement.prototype.defaults)
+});
+
+joint.shapes.tm.MyText = joint.shapes.basic.TextBlock.extend({
+ toolMarkup: ['<g class="element-tools">',
+        '<g class="element-tool-remove"><circle fill="red" r="11"/>',
+        '<path transform="scale(.8) translate(-16, -16)" d="M24.778,21.419 19.276,15.917 24.777,10.415 21.949,7.585 16.447,13.087 10.945,7.585 8.117,10.415 13.618,15.917 8.116,21.419 10.946,24.248 16.447,18.746 21.948,24.248z"/>',
+        '<title>Remove this element from the model</title>',
+        '</g>',
+        '</g>'].join(''),
+         defaults: joint.util.deepSupplement({
+
+        type: 'tm.Actor',
+        attrs: {
+            rect: { fill: 'white', stroke: 'black', 'stroke-width': 1, 'follow-scale': true, width: 160, height: 80 },
+            text: { ref: 'rect'}
+        },
+        size: { width: 160, height: 80 }
+    }, joint.shapes.basic.TextBlock.prototype.defaults)
+
+});
+
+joint.shapes.tm.ActorText = joint.shapes.tm.MyText.extend({
+
+  defaults: joint.util.deepSupplement({
+
+        type: 'tm.ActorText',
+        attrs: {
+            rect: { fill: 'white', stroke: 'black', 'stroke-width': 1, 'follow-scale': true, width: 160, height: 80 },
+            text: { ref: 'rect'}
+        },
+        size: { width: 160, height: 80 }
+    }, joint.shapes.tm.MyText.prototype.defaults)
 });
 
 
@@ -70,6 +104,13 @@ joint.shapes.tm.ToolElementView = joint.dia.ElementView.extend({
 
 
 joint.shapes.tm.ActorView = joint.shapes.tm.ToolElementView;
+joint.shapes.tm.ActorTextView = joint.shapes.tm.ToolElementView;
+
+
+
+
+
+
 
 function onCreateButtonClick(){
   graph0.clear();
@@ -108,10 +149,12 @@ var actor_d = new joint.shapes.tm.Actor({
   //console.log(cellkind);
   if (celldashed) {
     actor_d.prop({ name: { text: 'Cell' } });
+    actor_d.prop({ kind: { text: cellkind } });
     graph0.addCell([actor_d]);
   }
   else {
     actor.prop({ name: { text: 'Cell' } });
+    actor.prop({ kind: { text: cellkind } });
     graph0.addCell([actor]);
   }
   document.getElementById("mytext").innerHTML = "INFO: Drag this cell below. Move inside Group to embed. <br/> This cell does not re-scale.";
@@ -147,15 +190,36 @@ var actor_d = new joint.shapes.tm.Actor({
   //console.log(cellkind);
   if (celldashed) {
     actor_d.prop({ name: { text: 'Group' } });
+    actor_d.prop({ kind: { text: gg } });
     graph0.addCell([actor_d]);
   }
   else {
     actor.prop({ name: { text: 'Group' } });
+    actor.prop({ kind: { text: gg } });
     graph0.addCell([actor]);
   }
 
   document.getElementById("mytext").innerHTML = "INFO: Drag this group cell below. Use all corners but top-left to rescale.  <br/> Move on top of cells or move cells inside to embed content.";
 };
+
+
+function onCreateText(){
+  graph0.clear();
+   
+var actort = new joint.shapes.tm.ActorText({
+    position: {x:80, y:10},
+    size: { width: 140, height: 100 },
+    attrs: { rect: { fill: 'transparent', stroke : "white", 'stroke-width': 2 }, text:{fill:'white'}},
+    content: "<p style='color:white;'>asdf asdf asdf asdf this needs to word wrap</p>"
+});
+
+    actort.prop({ name: { text: 'Group' } });
+    actort.prop({ kind: { text: 0 } });
+    graph0.addCell([actort]);
+
+  document.getElementById("mytext").innerHTML = "INFO: Drag this group cell below. Use all corners but top-left to rescale.";
+};
+
 
 
 
@@ -232,12 +296,14 @@ function onCreateLinkClick(lc){
     if (dashed) { 
         cell_d.set('smooth' , true);
         cell_d.prop({ name: { text: 'Link' } });
+        cell_d.prop({ kind: { text: linkkind} });
         graph0.addCell(cell_d);
         }
     else {
         
         cell.set('smooth' , true);
         cell.prop({ name: { text: 'Link' } });
+        cell.prop({ kind: { text: linkkind} });
         graph0.addCell(cell);
 
     }
