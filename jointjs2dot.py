@@ -4,7 +4,7 @@ import numpy as np
 import sys,os
 
 
-filein = 'extraFiles/group.json'##sys.argv[1]
+filein = sys.argv[1]
 
 with open(filein) as data_file:    
     data = json.load(data_file)
