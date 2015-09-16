@@ -4,8 +4,7 @@ import numpy as np
 import sys,os
 
 
-
-filein = sys.argv[1]
+filein = 'extraFiles/group.json'##sys.argv[1]
 
 with open(filein) as data_file:    
     data = json.load(data_file)
@@ -15,20 +14,27 @@ with open(filein) as data_file:
 cells=data['cells']
 
 All=[]
+Groups=[]
+label=0
 for i in range(len(cells)):
     All.append(cells[i]['id'])
+    if cells[i]['name']['text']== 'Group':
+        Groups.append(cells[i]['id'])
+        label+=1
 
 All=np.array(All)
+Groups=np.array(Groups)
 
 
-Lines = 'digraph G { \n'
+Head = 'digraph G { \n'
 
-dict={u'#7cbf00':'\"#7CBF00\"', u'#bf0000':'\"#BF0000\"',u'#6495ED':'\"#6495ED\"'}
+def ccolor(inputcolor):
+    return '\"%s\"' % inputcolor.upper()
 
-
-Lines+= """
+Head+= """
+    compound=true;
     graph [bgcolor=\"#333333\"];
-    edge [color=\"#bf5600\", penwidth=1.5];
+    edge [penwidth=1.5];
     node [  shape = polygon,
         sides = 4,
         penwidth = 2,
@@ -40,60 +46,124 @@ Lines+= """
         fontcolor = white,
         fontname = "Helvetica-Outline" ];\n"""
 
+
 cell_names=[]
-Lines2=""
+group_names=[]
+link_names=[]
+
+
+def add_cell(buffer, cell_names, id):
+    idx = np.where(All==id)[0][0]
+    CC = cells[idx]
+    if CC['name']['text'] == 'Cell':
+        label = CC['attrs']['text']['text']
+    if id not in cell_names:          
+        cs=ccolor(CC['attrs']['rect']['stroke'])
+        ls='solid'
+        if CC['attrs']['rect'].has_key('stroke-dasharray'): ls='dashed'
+        buffer += '\"' + id + '\" [color = '+cs+', style='+ls+', label='+label+'];\n'
+        cell_names.append(id)
+    return buffer, cell_names
+        
+    
+    
+def add_link(buffer, link_names, C, Source, Target):
+    label=C['labels'][0]['attrs']['text']['text']
+
+    lls = 'solid'
+    if C['attrs']['.connection'].has_key('stroke-dasharray'): lls='dashed'
+
+    if C['attrs'].has_key('.marker-source') and C['attrs'].has_key('.marker-target') : dir = 'both'
+    if not C['attrs'].has_key('.marker-source') and not C['attrs'].has_key('.marker-target') : dir = 'none'
+    if C['attrs'].has_key('.marker-source') and not C['attrs'].has_key('.marker-target') : dir = 'back'
+    if not C['attrs'].has_key('.marker-source') and C['attrs'].has_key('.marker-target') : dir = 'forward'
+
+    linkc=ccolor(C['attrs']['.connection']['stroke'])
+    textc=ccolor(C['labels'][0]['attrs']['text']['fill'])
+
+    options=''
+
+    if Source.find('dummy') > -1 :
+        options+='ltail = \"' + Source.replace('dummy','cluster') + '\",'
+
+    if Target.find('dummy') >-1 :
+        options+='lhead = \"' + Target.replace('dummy','cluster') + '\",'       
+
+    if label != '':
+        buffer += '\"' + Source + '\" -> ' + '\"'+ Target + '\" ['+options+' dir='+dir+', color ='+linkc+', label = \"'+label+'\", fontcolor='+textc+', style='+lls+']' + ';\n'
+    else:
+        buffer += '\"' + Source + '\" -> ' + '\"'+ Target + '\" ['+options+' dir='+dir+', color='+linkc+', style='+lls+'];\n'
+    link_names.append(C['id'])
+
+    return buffer, link_names
+
+
+for ig in range(len(Groups)):
+
+    id = Groups[ig]
+    Lines="subgraph "+'\"cluster'+id+'\"'+" { \n  "+'\"dummy'+id+'\"'+" [shape=point, style=invis];\n "
+    Lines2="" #for cells
+    Lines3="" #for groups
+    inside=[]
+
+    idg=np.where(All==id)[0][0]
+    G=cells[idg]
+    print idg
+    Lines+="color = "+ccolor(G['attrs']['rect']['stroke'])+";\n"
+    for inside_id in G['embeds']:
+        inside.append(inside_id)
+                   
+
+    for i in range(len(cells)):
+        C=cells[i]
+        #print C['type'], C['id']
+        if C['type'] == 'link' :
+            idlink = C['id']
+            if idlink not in link_names:           
+                S_id=C['source']['id']
+                if S_id in inside:
+                    Lines2, cell_names = add_cell(Lines2, cell_names, S_id)
+                T_id=C['target']['id']
+                if T_id in inside:
+                    Lines2, cell_names = add_cell(Lines2, cell_names, T_id)
+                if S_id in inside and T_id in inside:
+                    Lines, link_names = add_link(Lines, link_names, C, S_id, T_id)
+
+    
+    Lines+=Lines2+'}\n'
+    Head+=Lines
+
+
+Lines=""
+Lines2="" #for cells
+Lines3="" #for groups
+
 for i in range(len(cells)):
     C=cells[i]
     #print C['type'], C['id']
     if C['type'] == 'link' :
-        S_idx=np.where(All==C['source']['id'])[0][0]
-        S=cells[S_idx]['attrs']['text']['text']
-        if S not in cell_names:
+        idlink = C['id']
+        if idlink not in link_names:           
+            S_id=C['source']['id']
+            if S_id in Groups:
+                S_id='dummy'+S_id
+            else:
+                Lines2, cell_names = add_cell(Lines2, cell_names, S_id)
+            T_id=C['target']['id']
+            if T_id in Groups:
+                T_id='dummy'+T_id
+            else:
+                Lines2, cell_names = add_cell(Lines2, cell_names, T_id)
+            Lines, link_names = add_link(Lines, link_names, C, S_id, T_id)           
         
-            cs=dict[cells[S_idx]['attrs']['rect']['stroke']]
-            ls='solid'
-            if cells[S_idx]['attrs']['rect'].has_key('stroke-dasharray'): ls='dashed'
-            Lines2 += '\"' + S + '\" [color = '+cs+', style='+ls+'];\n'
-            cell_names.append(S)
-        
-        T_idx=np.where(All==C['target']['id'])[0][0]
-        T=cells[T_idx]['attrs']['text']['text']
-
-        if T not in cell_names:
-        
-            cs=dict[cells[T_idx]['attrs']['rect']['stroke']]
-            ls='solid'
-            if cells[T_idx]['attrs']['rect'].has_key('stroke-dasharray'): ls='dashed'
-            Lines2 += '\"' + T + '\" [color = '+cs+', style='+ls+'];\n'
-            cell_names.append(T)
-        
-
-        #cs=dict[cells[T_idx]['attrs']['rect']['stroke']]#
-        #ls='solid'
-        #if cells[T_idx]['attrs']['rect'].has_key('stroke-dasharray'): ls='dashed'#
-        #Lines += '\"' + T + '\" [color = '+cs+', style='+ls+'];\n' 
-
-        label=C['labels'][0]['attrs']['text']['text']
-
-        lls = 'solid'
-        if C['attrs']['.connection'].has_key('stroke-dasharray'): lls='dashed'
-
-        if C['attrs'].has_key('.marker-source') and C['attrs'].has_key('.marker-target') : dir = 'both'
-        if not C['attrs'].has_key('.marker-source') and not C['attrs'].has_key('.marker-target') : dir = 'none'
-        if C['attrs'].has_key('.marker-source') and not C['attrs'].has_key('.marker-target') : dir = 'back'
-        if not C['attrs'].has_key('.marker-source') and C['attrs'].has_key('.marker-target') : dir = 'forward'
-
-        if label != '':
-            Lines += '\"' + S + '\" -> ' + '\"'+ T + '\" [dir='+dir+', label = \"'+label+'\", fontcolor=\"#bfac00\", style='+lls+']' + ';\n'
-        else:
-            Lines += '\"' + S + '\" -> ' + '\"'+ T + '\" [dir='+dir+', style='+lls+'];\n'
 
 Lines += Lines2
 Lines += '}'
 
+
 dotfile = filein[:-4]+'dot'
 F=open(dotfile,'w')
-F.write(Lines)
+F.write(Head+Lines)
 F.close()
 
 pngfile=filein[:-4]+'png'
