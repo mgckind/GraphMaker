@@ -21,7 +21,7 @@ def findbb(x,y):
 
 if os.path.exists(filejson):
     csize=True
-    filein = '/Users/Matias/Desktop/buffer.json'#sys.argv[1]
+    filein = filejson
     with open(filein) as data_file:    
         data = json.load(data_file)
     cells=data['cells']
