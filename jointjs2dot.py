@@ -5,11 +5,8 @@ import sys,os
 
 
 filein = sys.argv[1]
-
 with open(filein) as data_file:    
     data = json.load(data_file)
-
-    
 
 cells=data['cells']
 
@@ -18,6 +15,18 @@ Groups=[]
 label=0
 for i in range(len(cells)):
     All.append(cells[i]['id'])
+
+
+for i in range(len(cells)):
+    try:
+        print cells[i]['attrs']['text']['text']
+    except:
+        pass
+    print cells[i]['type']
+    try:
+        print cells[i]['labels'][0]['attrs']['text']['text']
+    except:
+        pass
     if cells[i]['name']['text']== 'Group':
         Groups.append(cells[i]['id'])
         label+=1
@@ -61,7 +70,7 @@ def add_cell(buffer, cell_names, id):
         cs=ccolor(CC['attrs']['rect']['stroke'])
         ls='solid'
         if CC['attrs']['rect'].has_key('stroke-dasharray'): ls='dashed'
-        buffer += '\"' + id + '\" [color = '+cs+', style='+ls+', label='+label+'];\n'
+        buffer += '\"' + id + '\" [color = '+cs+', style='+ls+', label=\"'+label+'\"];\n'
         cell_names.append(id)
     return buffer, cell_names
         
@@ -119,6 +128,7 @@ for ig in range(len(Groups)):
         #print C['type'], C['id']
         if C['type'] == 'link' :
             idlink = C['id']
+            print idlink
             if idlink not in link_names:           
                 S_id=C['source']['id']
                 if S_id in inside:
