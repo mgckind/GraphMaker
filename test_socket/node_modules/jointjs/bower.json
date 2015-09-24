@@ -1,0 +1,21 @@
+{
+  "name": "jointjs",
+  "private": true,
+  "dependencies": {
+    "lodash": "2.4.1",
+    "backbone": "1.2.1",
+    "jquery": "2.0.3",
+    "graphlib": "1.0.1",
+    "dagre": "0.7.1"
+  },
+  "devDependencies": {
+    "qunit": "~1.18.0",
+    "blanket": "~1.1.5",
+    "requirejs": "2.1.17",
+    "sinonjs": "~1.14.1"
+  },
+  "main": [
+    "dist/joint.js",
+    "dist/joint.css"
+  ]
+}

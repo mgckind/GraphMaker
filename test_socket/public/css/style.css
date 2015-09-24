@@ -1,0 +1,8 @@
+.element .element-tools {
+	display: none;
+	cursor: pointer
+}
+
+.element:hover .element-tools {
+	display: inline;
+}

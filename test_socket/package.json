@@ -1,0 +1,10 @@
+{
+  "name": "socket-GraphMaker",
+  "version": "0.2.1",
+  "description": "Graph Maker with socket.io ",
+  "dependencies": {
+    "express": "^4.10.2",
+    "jointjs": "^0.9.4",
+    "socket.io": "^1.3.7"
+  }
+}
