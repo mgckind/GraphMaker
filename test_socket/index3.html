@@ -38,7 +38,8 @@ var saved = true;
 <button onclick="clearit()"> New graph</button><br>
 <button id ="openfile" > Load</button><br>
 <!--<button onclick="readit()"> Load</button>-->
-<button onclick="pngit()"> Save svg </button><br>
+<button onclick="svgit()"> Save svg </button><br>
+<button onclick="pngit()"> Save png </button><br>
 <!--<button onclick="saveit()"> Save</button>-->
 
 <button onclick="saveitas()"> Save as ...</button><br>
@@ -404,7 +405,7 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
 
 
 paper.on('cell:pointermove', function(element,eve,x,y) {
-    //socket.emit('moveCell', {element:element, eve:eve, x:x, y:y});
+    socket.emit('busy');
     var cell = element.model;
     if (cell.prop('name/text') == 'Link'){
         cell.toFront();
@@ -441,6 +442,7 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
 
 
 paper.on('cell:pointerup', function(element,eve,x,y) {
+    socket.emit('free');
     var cell = element.model;
     if (cell.prop('name/text') == 'Link' ){
         cell.toFront();
@@ -450,6 +452,7 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
     resize00 = false;
 
     if (cell.prop('name/text') == 'Group' )  {
+    cell.toFront();
     var inside= graph.findModelsUnderElement(cell);
      console.log(cell.getBBox(), inside.length );
      if (inside.length > 0) {
@@ -459,9 +462,12 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
              //inside[i].toFront();
                     }
             }
-            cell.toBack();
         }
-        socket.emit('upGroup',{id:cell.id});
+            cell.toBack();
+        socket.emit('upGroup',{id:cell.id, inside: inside, x:cell.get('position').x, y:cell.get('position').y});
+   }
+   if (cell.prop('name/text') == 'Cell' )  {
+    socket.emit('upCell',{id:cell.id, x:cell.get('position').x, y:cell.get('position').y});
    }
 
 });
@@ -518,6 +524,16 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
 
    socket.on('addCell', function(Newcell){
     graph.addCells([Newcell]);
+   });
+
+    socket.on('busy', function(){
+    var div = document.getElementById('mytext');
+    div.innerHTML = ' </br> &nbsp; &nbsp; &nbsp;  Working...';
+   });
+    
+    socket.on('free', function(){
+    var div = document.getElementById('mytext');
+    div.innerHTML = "INFO:";
    });
    
    socket.on('moveCell', function(msg){
@@ -605,6 +621,10 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
 
    socket.on('clear', function(){
     graph.clear();
+   });
+
+    socket.on('openpng', function(){
+    window.open('/buffer.png','_blank'); 
    });
     
    socket.on('selectCell', function(selId){

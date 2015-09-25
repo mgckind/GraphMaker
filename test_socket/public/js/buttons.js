@@ -88,6 +88,15 @@ function pngit(){
 var svgDoc = paper.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);
-saveAs(new Blob([svgString], {type:"application/svg+xml"}), "buffer.svg")
-
+socket.emit('savepng',{svg:svgString, json:JSON.stringify(graph.toJSON())});
 };
+
+function svgit(){
+//V(paper.svg).remove(hrr);
+var svgDoc = paper.svg;
+var serializer = new XMLSerializer();
+var svgString = serializer.serializeToString(svgDoc);
+saveAs(new Blob([svgString], {type:"application/svg+xml"}), "buffer.svg");
+};
+
+

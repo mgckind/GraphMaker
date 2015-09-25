@@ -5,6 +5,7 @@
   "dependencies": {
     "express": "^4.10.2",
     "jointjs": "^0.9.4",
+    "shelljs": "^0.5.3",
     "socket.io": "^1.3.7"
   }
 }
