@@ -20,7 +20,10 @@ body {
 <script type="text/javascript" src="/js/validate.js"></script>
 <script type="text/javascript" src="/js/elements.js"></script>
 <script type="text/javascript" src="/js/buttons.js"></script>
-<script src="/js/socket.io-1.2.0.js"></script>
+<script type="text/javascript" src="/js/dagre.js"></script>
+<script type="text/javascript" src="/js/graphlib.js"></script>
+<script type="text/javascript" src="/js/joint.layout.DirectedGraph.js"></script>
+<script type="text/javascript" src="/js/socket.io-1.2.0.js"></script>
 
 <script>
 var linkkind=1;
@@ -38,14 +41,15 @@ var saved = true;
 <button onclick="clearit()"> New graph</button><br>
 <button id ="openfile" > Load</button><br>
 <!--<button onclick="readit()"> Load</button>-->
-<button onclick="svgit()"> Save svg </button><br>
-<button onclick="pngit()"> Save png </button><br>
+<button onclick="svgit()"> Save SVG </button><br>
+<button onclick="pngit()"> Save PNG </button><br>
 <!--<button onclick="saveit()"> Save</button>-->
 
-<button onclick="saveitas()"> Save as ...</button><br>
+<button onclick="saveitas()"> Save JSON</button><br>
 <!--<button onclick="clearit()"> Clear</button>-->
-
 <input type="file" id="theFile"/>
+
+<button onclick="testit()"> Test</button><br>
 
 </div>
 
@@ -59,37 +63,37 @@ URL: <input type="text" name="flink" value="" >
 <br>
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" id="cell1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) { cellkind = 1; document.NewCell.submit();}"> Create </text>
+  <rect x="0" y ="0" id="cell1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #7cbf00" onclick="if (validateCell()) {cellkind = 1; document.NewCell.submit();}" cursor="pointer"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) { cellkind = 1; document.NewCell.submit();}" cursor="pointer"> Create </text>
 </g>
 </svg>
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" id="cell2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}"> Create </text>
+  <rect x="0" y ="0" id="cell2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #bf0000" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}" cursor="pointer"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 2; document.NewCell.submit();}" cursor="pointer"> Create </text>
 </g>
 </svg>
 
 <svg width="100" height="40" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" id="cell3" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}"> Create </text>
+  <rect x="0" y ="0" id="cell3" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #6495ED" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}" cursor="pointer"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="if (validateCell()) {cellkind = 3; document.NewCell.submit();}" cursor="pointer"> Create </text>
 </g>
 </svg>
 <br>
 Create variable group cell &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <br>
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" id="group1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup(1);"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(1);"> Group </text>
+  <rect x="0" y ="0" id="group1" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: yellow" onclick="onCreateGroup(1);" cursor="pointer"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(1);" cursor="pointer"> Group </text>
 </g>
 </svg>
 
 <svg width="175" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
-  <rect x="0" y ="0" id="group2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #C974FF" onclick="onCreateGroup(2);"></rect>
-  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(2);"> Group </text>
+  <rect x="0" y ="0" id="group2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #C974FF" onclick="onCreateGroup(2);" cursor="pointer"></rect>
+  <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(2);" cursor="pointer"> Group </text>
 </g>
 </svg>
 
@@ -126,23 +130,23 @@ Name: <input type="text" name="Lname">
     </marker>
 </defs>
   <g>
-    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; linkcolor=1; document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" id="arrow1" style="stroke:#bf5600;stroke-width:3;marker-end: url(#markerArrow);" />
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; linkcolor=1; document.NewLink.submit();" cursor="pointer"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="arrow1" style="stroke:#bf5600;stroke-width:3;marker-end: url(#markerArrow);" cursor="pointer"/>
   </g>
 </svg>
 
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ;linkcolor=1;document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" id="arrow2" style="stroke:#bf5600;stroke-width:3 ;marker-start: url(#markerArrow1); marker-end: url(#markerArrow); " />
+    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ;linkcolor=1;document.NewLink.submit();" cursor="pointer"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="arrow2" style="stroke:#bf5600;stroke-width:3 ;marker-start: url(#markerArrow1); marker-end: url(#markerArrow); " cursor="pointer" />
   </g>
 </svg>
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ;linkcolor=1;document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" id="arrow3" style="stroke:#bf5600;stroke-width:3 " />
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ;linkcolor=1;document.NewLink.submit();"cursor="pointer" ></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="arrow3" style="stroke:#bf5600;stroke-width:3 " cursor="pointer" />
   </g>
 </svg>
 
@@ -160,23 +164,23 @@ Name: <input type="text" name="Lname">
     </marker>
 </defs>
   <g>
-    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; linkcolor=2; document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" id="barrow1" style="stroke:#7FFFD4;stroke-width:3;marker-end: url(#markerbArrow);" />
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind = 1; linkcolor=2; document.NewLink.submit();" cursor="pointer"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="barrow1" style="stroke:#7FFFD4;stroke-width:3;marker-end: url(#markerbArrow);" cursor="pointer" />
   </g>
 </svg>
 
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ; linkcolor=2; document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" id="barrow2" style="stroke:#7FFFD4;stroke-width:3 ;marker-start: url(#markerbArrow1); marker-end: url(#markerbArrow); " />
+    <rect x="0" y ="0" class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =2 ; linkcolor=2; document.NewLink.submit();" cursor="pointer"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="barrow2" style="stroke:#7FFFD4;stroke-width:3 ;marker-start: url(#markerbArrow1); marker-end: url(#markerbArrow); " cursor="pointer" />
   </g>
 </svg>
 
 <svg width="110" height="40" xmlns="http://www.w3.org/2000/svg">
   <g>
-    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ; linkcolor=2; document.NewLink.submit();"></rect>
-    <line x1="10" y1="25" x2="80" y2="25" id="barrow3" style="stroke:#7FFFD4;stroke-width:3 " />
+    <rect x="0" y ="0"  class="btn" width="100" height="40" style="fill: #333;stroke-width:0;stroke: #333" onclick="linkkind =3 ; linkcolor=2; document.NewLink.submit();" cursor="pointer"></rect>
+    <line x1="10" y1="25" x2="80" y2="25" id="barrow3" style="stroke:#7FFFD4;stroke-width:3 " cursor="pointer" />
   </g>
 </svg>
 
@@ -193,10 +197,12 @@ Name: <input type="text" name="Lname">
 </div>
 <hr>
 <div id="myholder"></div>
+<div id="myholderT" style="visibility:hidden" ></div>
 
 <script>
 var graph = new joint.dia.Graph;
 var graph0 = new joint.dia.Graph;
+var graphT = new joint.dia.Graph;
 
 var paper = new joint.dia.Paper({
     el: $('#myholder'),
@@ -218,6 +224,16 @@ var paper0 = new joint.dia.Paper({
     gridSize: 1
 });
 
+
+var paperT = new joint.dia.Paper({
+    el: $('#myholderT'),
+    interactive : false,
+    width: 1800,
+    //width: $(document).width(),
+    height: 2000,
+    model: graphT,
+    gridSize: 1
+});
 
 
 var l1 = g.line(g.point(0, 100), g.point(1800, 100));

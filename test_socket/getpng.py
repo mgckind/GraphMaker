@@ -4,62 +4,127 @@ import json
 filesvg=sys.argv[1]
 filehtml='temp.html'
 filepng=filesvg[:-4]+'.png'
-filejson=filesvg[:-4]+'.json'
 
-csize=False
-minx=5000
-miny=5000
-maxx=0
-maxy=0
-
-def findbb(x,y):
-    global minx,miny,maxx,maxy
-    minx=min(minx,x)
-    miny=min(miny,y)
-    maxx=max(maxx,x)
-    maxy=max(maxy,y)
-
-if os.path.exists(filejson):
-    csize=True
-    filein = filejson
-    with open(filein) as data_file:    
-        data = json.load(data_file)
-    cells=data['cells']
-    
-    for i in range(len(cells)):
-        C=cells[i]
-        if C['type']=='link':
-            if C['source'].has_key('id'):
-                pass
-            else:
-                print C['source']
-            if C['target'].has_key('id'):
-                pass
-            else:
-                x=C['target']['x']
-                y=C['target']['y']
-                findbb(x,y)
-        else:
-            x=C['position']['x']+C['size']['width']
-            y=C['position']['y']+C['size']['height']
-            findbb(x,y)
-            x=C['position']['x']
-            y=C['position']['y']
-            findbb(x,y)
-    maxx=int(maxx+minx)
-    maxy=int(maxy+miny)
 
 F=open(filesvg,'r')
 FF=F.readlines()
 F.close()
 
 
-if csize:
-    New=FF[0][:FF[0].find('width')]+'width=\"'+str(maxx)+'\" height=\"'+str(maxy)+'\" '+FF[0][FF[0].find('><'):]  
-else:
-    New=FF[0]
-F2=open(filehtml,'w')
+New=FF[0][:FF[0].find('><')]+' style=\"background: #333\">\n'
+
+ww=('').join(New.split());
+ww=ww.split('width=\"')[1]
+ww=ww[:ww.find('\"')]
+print ww
+
+hh=('').join(New.split());
+hh=hh.split('height=\"')[1]
+hh=hh[:hh.find('\"')]
+print hh
 Lines="""
+  <style type="text/css"><![CDATA[
+    .connection-wrap {
+   fill: none;
+   stroke: black;
+   stroke-width: 15;
+   stroke-linecap: round;
+   stroke-linejoin: round;
+   opacity: 0;
+}
+
+.connection {
+   fill: none;
+   stroke-linejoin: round;
+}
+
+.marker-source, .marker-target {
+   vector-effect: non-scaling-stroke;
+}
+
+
+.marker-vertices {
+   opacity: 0;
+}
+.marker-arrowheads {
+   opacity: 0;
+}
+.link-tools {
+   opacity: 0;
+}
+.link-tools .tool-options {
+   display: none;       /* by default, we don't display link options tool */
+}
+.link-tools .tool-remove circle {
+   fill: red;
+}
+.link-tools .tool-remove path {
+   fill: white;
+}
+
+.marker-vertex {
+   fill: #1ABC9C;
+}
+
+.marker-arrowhead {
+   fill: #1ABC9C;
+}
+
+.marker-vertex-remove {
+   opacity: .1;
+   fill: white;
+}
+
+.marker-vertex-group:hover .marker-vertex-remove {
+   opacity: 1;
+}
+
+.marker-vertex-remove-area {
+   opacity: .1;
+}
+
+.highlighted {
+    opacity: 0.7;
+}
+
+text.highlighted {
+    fill: #FF0000;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .highlighted {
+        outline: 2px solid #FF0000;
+        opacity: initial;
+    }
+}
+
+
+.element .fobj {
+    overflow: hidden;
+}
+.element .fobj body {
+    background-color: transparent;
+    margin: 0px;
+}
+.element .fobj div {
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    padding: 0px 5px 0px 5px;
+}
+.element .element-tools {
+        display: none;
+}
+
+  ]]></style>
+
+"""
+New+=Lines+FF[0][FF[0].find('><')+1:] 
+
+
+
+F2=open(filehtml,'w')
+Lineshtml="""
 <!DOCTYPE html>
 <html>
 <head>
@@ -70,19 +135,16 @@ body {
     font: 300 100.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
     }
 </style>
-<link rel="stylesheet" type="text/css" href="public/css/joint.css" />
-<link rel="stylesheet" type="text/css" href="public/css/style.css" />
-<link rel="stylesheet" type="text/css" href="public/css/mycss.css" />
 </head>
 <body>\n"""
-Lines+=New
-Lines+="\n"
-Lines+="""
+Lineshtml+=New
+Lineshtml+="\n"
+Lineshtml+="""
 </body>
 </html>"""
-F2.write(Lines)
+F2.write(Lineshtml)
 F2.close()
 
-os.system("/Users/Matias/phantomjs/bin/phantomjs /Users/Matias/phantomjs/examples/rasterize.js temp.html "+filepng)
-os.system("rm -f "+filehtml)
+os.system("/Users/Matias/phantomjs/bin/phantomjs /Users/Matias/phantomjs/examples/rasterize.js temp.html "+filepng+' '+ww+'px*'+hh+'px')
+#os.system("rm -f "+filehtml)
 #os.system("rm -f "+filesvg)

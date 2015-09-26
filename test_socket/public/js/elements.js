@@ -133,7 +133,7 @@ if (cellkind == 3) { var cellcolor =  "#6495ED";}
 var actor = new joint.shapes.tm.Actor({
     position: {x:(300-(Math.max(charL*10,45)))/2, y:40},
     size: { width: Math.max(charL*10,45), height: 40 },
-    attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3 }, 
+    attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3}, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
              text: { text: cname,  fill: '#fff' } }
 });
@@ -249,6 +249,8 @@ function onCreateLinkClick(lc){
         labels: [{ position: .5, attrs: { 
             text: { text: Lname , 'font-weight': 'bold' , fill: textcolor},
             rect : {fill : '#333'} } }],
+            router: { name: 'manhattan' },
+            connector: { name: 'rounded' },
         attrs: { 
         '.connection': { 'stroke-width': 3, stroke: linecolor },
                 },
@@ -261,6 +263,8 @@ function onCreateLinkClick(lc){
         labels: [{ position: .5, attrs: { 
             text: { text: Lname , 'font-weight': 'bold' , fill: textcolor},
             rect : {fill : '#333'} } }],
+            router: { name: 'manhattan' },
+            connector: { name: 'rounded' },
         attrs: { 
         '.connection': { 'stroke-width': 3, stroke: linecolor, 'stroke-dasharray' : "5 5" },
                 },

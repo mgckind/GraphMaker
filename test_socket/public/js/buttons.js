@@ -84,8 +84,11 @@ function saveitas(){
 };
 
 function pngit(){
-//V(paper.svg).remove(hrr);
-var svgDoc = paper.svg;
+temp=graph.toJSON();
+graphT.fromJSON(temp);
+var bbox = paperT.getContentBBox();
+paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
+var svgDoc = paperT.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);
 socket.emit('savepng',{svg:svgString, json:JSON.stringify(graph.toJSON())});
@@ -93,10 +96,27 @@ socket.emit('savepng',{svg:svgString, json:JSON.stringify(graph.toJSON())});
 
 function svgit(){
 //V(paper.svg).remove(hrr);
-var svgDoc = paper.svg;
+
+temp=graph.toJSON();
+graphT.fromJSON(temp);
+var els = graphT.getElements();
+console.log(els.length, 'elements');
+for (i = 0; i < els.length; i++) {
+   els[i].attr('text/fill', "red"); 
+};
+var bbox = paperT.getContentBBox();
+paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
+var svgDoc = paperT.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);
-saveAs(new Blob([svgString], {type:"application/svg+xml"}), "buffer.svg");
+socket.emit('modifysvg',{svg:svgString, json:JSON.stringify(graphT.toJSON())});
 };
 
+//socket.on('modifysvg', function(msg){
+//saveAs(new Blob([msg.svg], {type:"application/svg+xml"}), "buffer.svg")
+//});
+
+function testit(){
+ joint.layout.DirectedGraph.layout(graph);
+};
 
