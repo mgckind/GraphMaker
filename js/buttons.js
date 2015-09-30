@@ -8,6 +8,8 @@ function onFileChange(event) {
         var graphObj = JSON.parse(event.target.result);
         graph.clear();
         graph.fromJSON(graphObj);
+         console.log('loaded');
+         socket.emit('load',graph.toJSON());   
     }
 
 
@@ -35,7 +37,6 @@ function openit(filename) {
       url: "./extraFiles/"+filename2,
       success: function (jsonString, textStatus, errorThrown) {
          graph.clear();  
-         graph.fromJSON(jsonString);   
         }
      });
     saved = false;
@@ -66,6 +67,7 @@ function clearit(){
 if (saved) {
     graph.clear();
     saved = false;
+    socket.emit('clear');
 }
 else {
     alert("Warning: You haven't saved the current graph");
@@ -82,10 +84,137 @@ function saveitas(){
 };
 
 function pngit(){
-//V(paper.svg).remove(hrr);
-var svgDoc = paper.svg;
+temp=graph.toJSON();
+graphT.fromJSON(temp);
+var bbox = paperT.getContentBBox();
+paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
+var svgDoc = paperT.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);
-saveAs(new Blob([svgString], {type:"application/svg+xml"}), "buffer.svg")
-
+socket.emit('savepng',{svg:svgString});
 };
+
+function svgit(){
+//V(paper.svg).remove(hrr);
+
+temp=graph.toJSON();
+graphT.fromJSON(temp);
+var els = graphT.getElements();
+console.log(els.length, 'elements');
+//for (i = 0; i < els.length; i++) {
+//   els[i].attr('text/fill', "red"); 
+//};
+var bbox = paperT.getContentBBox();
+paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
+var svgDoc = paperT.svg;
+var serializer = new XMLSerializer();
+var svgString = serializer.serializeToString(svgDoc);
+var nbreak = svgString.search('><');
+var headline = svgString.slice(0,nbreak);
+headline = headline.concat(' style="background: #333">')
+var rest = svgString.slice(nbreak+1);
+//console.log(headline.concat(mystyles, rest), svgString.length, rest);
+//socket.emit('modifysvg',{svg:svgString});
+//};
+saveAs(new Blob([headline.concat(mystyles, rest)], {type:"application/svg+xml"}), "buffer.svg");
+};
+
+function testit(){
+ joint.layout.DirectedGraph.layout(graph);
+};
+
+var mystyles='\
+  <style type="text/css"><![CDATA[ \
+    .connection-wrap { \
+   fill: none; \
+   stroke: black; \
+   stroke-width: 15; \
+   stroke-linecap: round; \
+   stroke-linejoin: round; \
+   opacity: 0; \
+} \
+ \
+.connection { \
+   fill: none; \
+   stroke-linejoin: round; \
+} \
+ \
+.marker-source, .marker-target { \
+   vector-effect: non-scaling-stroke; \
+} \
+ \
+ \
+.marker-vertices { \
+   opacity: 0; \
+} \
+.marker-arrowheads { \
+   opacity: 0; \
+} \
+.link-tools { \
+   opacity: 0; \
+} \
+.link-tools .tool-options { \
+   display: none;      \
+} \
+.link-tools .tool-remove circle { \
+   fill: red; \
+} \
+.link-tools .tool-remove path { \
+   fill: white; \
+} \
+ \
+.marker-vertex { \
+   fill: #1ABC9C; \
+} \
+ \
+.marker-arrowhead { \
+   fill: #1ABC9C; \
+} \
+ \
+.marker-vertex-remove { \
+   opacity: .1; \
+   fill: white; \
+} \
+ \
+.marker-vertex-group:hover .marker-vertex-remove { \
+   opacity: 1; \
+} \
+ \
+.marker-vertex-remove-area { \
+   opacity: .1; \
+} \
+ \
+.highlighted { \
+    opacity: 0.7; \
+} \
+ \
+text.highlighted { \
+    fill: #FF0000; \
+} \
+ \
+@media screen and (-webkit-min-device-pixel-ratio:0) { \
+    .highlighted { \
+        outline: 2px solid #FF0000; \
+        opacity: initial; \
+    } \
+} \
+ \
+.element .fobj { \
+    overflow: hidden; \
+} \
+.element .fobj body { \
+    background-color: transparent; \
+    margin: 0px; \
+} \
+.element .fobj div { \
+    text-align: center; \
+    vertical-align: middle; \
+    display: table-cell; \
+    padding: 0px 5px 0px 5px; \
+} \
+.element .element-tools { \
+        display: none; \
+} \
+ \
+  ]]></style> ';
+

@@ -18,11 +18,11 @@ body {
 <script type="text/javascript" src="/js/joint.shapes.devs.min.js"></script>
 <script type="text/javascript" src="/js/FileSaver.js"></script>
 <script type="text/javascript" src="/js/validate.js"></script>
-<script type="text/javascript" src="/js/elements.js"></script>
 <script type="text/javascript" src="/js/buttons.js"></script>
 <script type="text/javascript" src="/js/dagre.js"></script>
 <script type="text/javascript" src="/js/graphlib.js"></script>
 <script type="text/javascript" src="/js/joint.layout.DirectedGraph.js"></script>
+<script type="text/javascript" src="/js/elements.js"></script>
 <script type="text/javascript" src="/js/socket.io-1.2.0.js"></script>
 
 <script>
@@ -90,13 +90,13 @@ Create variable group cell &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbs
 </g>
 </svg>
 
-<svg width="175" height="30" xmlns="http://www.w3.org/2000/svg">
+<svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
   <rect x="0" y ="0" id="group2" class="btn" width="100" height="30" style="fill: #333;stroke-width:3;stroke: #C974FF" onclick="onCreateGroup(2);" cursor="pointer"></rect>
   <text x="25" y="20"  fill="#fff" onclick="onCreateGroup(2);" cursor="pointer"> Group </text>
 </g>
 </svg>
-
+Label: <input id= "GroupName" type="text" name="grname">
 <!--
 <svg width="100" height="30" xmlns="http://www.w3.org/2000/svg">
 <g>
@@ -373,6 +373,9 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
     if (!cell.get('embeds') || cell.get('embeds').length === 0) {
         cell.toFront();
     }
+    else if (cell.prop('name/text') == 'Group'  && cell.get('parent')) {
+        cell.toFront;
+    }
     
     if (cell.get('parent')) {
         graph.getCell(cell.get('parent')).unembed(cell);
@@ -384,11 +387,11 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
      if (inside.length > 0) {
         for (i = 0; i < inside.length; i++) { 
              if (inside[i].get('parent') !== cell.id){
-             cell.embed(inside[i]);
+             //cell.embed(inside[i]);
              //inside[i].toFront();
                     }
             }
-            cell.toBack();
+           // cell.toBack();
         }
    }
 
@@ -493,11 +496,13 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
         var cell = element.model;
         cell2 = cell.clone();
         if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
-        cell2.position(x,y-130);
+            var pos_x=Math.max(0,x);
+            var pos_y=Math.max(100,y-130);
+        cell2.position(pos_x,pos_y);
         }
         else {
-        cell2.set('source', { x: x, y: y-130 });
-        cell2.set('target', { x: x+160, y: y-130+20 });
+        cell2.set('source', { x: Math.max(0,x), y: Math.max(10,y-130) });
+        cell2.set('target', { x: Math.max(160,x+160), y: Math.max(30,y-130+20) });
         }
         graph.addCells([cell2]);
         $( ".box" ).remove();
@@ -640,7 +645,7 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
    });
 
     socket.on('openpng', function(){
-    window.open('/buffer.png','_blank'); 
+    window.open('/buffer.png'); 
    });
     
    socket.on('selectCell', function(selId){

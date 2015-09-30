@@ -10,7 +10,7 @@ joint.shapes.tm.toolElement = joint.shapes.basic.Generic.extend({
 
     defaults: joint.util.deepSupplement({
         attrs: {
-            text: { 'font-weight': 400, 'font-size': 'small', fill: 'black', 'text-anchor': 'middle', 'ref-x': .5, 'ref-y': .5, 'y-alignment': 'middle' },
+            text: { 'font-weight': 400, 'font-size': 'small', 'text-anchor': 'middle', 'ref-x': .5, 'ref-y': .5, 'y-alignment': 'middle' },
         },
     }, joint.shapes.basic.Generic.prototype.defaults)
 
@@ -19,11 +19,8 @@ joint.shapes.tm.toolElement = joint.shapes.basic.Generic.extend({
 
 
 joint.shapes.tm.Actor = joint.shapes.tm.toolElement.extend({
-
     markup: '<g class="rotatable"><g class="scalable"><rect/><title class="tooltip"/></g><a><text/></a></g>',
-
     defaults: joint.util.deepSupplement({
-
         type: 'tm.Actor',
         attrs: {
             rect: { fill: 'white', stroke: 'black', 'stroke-width': 1, 'follow-scale': true, width: 160, height: 80 },
@@ -32,6 +29,44 @@ joint.shapes.tm.Actor = joint.shapes.tm.toolElement.extend({
         size: { width: 160, height: 80 }
     }, joint.shapes.tm.toolElement.prototype.defaults)
 });
+
+
+joint.shapes.tm.ActorGroup = joint.shapes.basic.Generic.extend({
+      toolMarkup: ['<g class="element-tools">',
+        '<g class="element-tool-remove"><circle fill="red" r="11"/>',
+        '<path fill= "white" transform="scale(.8) translate(-16, -16)" d="M24.778,21.419 19.276,15.917 24.777,10.415 21.949,7.585 16.447,13.087 10.945,7.585 8.117,10.415 13.618,15.917 8.116,21.419 10.946,24.248 16.447,18.746 21.948,24.248z"/>',
+        '<title>Remove this element from the model</title>',
+        '</g>',
+        '</g>'].join(''),
+
+    markup: [
+        '<g>',
+          '<rect class="uml-class-name-rect"/>',
+          '<g class="scalable">',
+           //'<rect class="uml-class-name-rect"/>',
+            '<rect class="uml-class-box-rect"/>',
+          '</g>',
+          '<text class="uml-class-name-text"/>',
+        '</g>'
+    ].join(''),
+    defaults: joint.util.deepSupplement({
+        type: 'tm.ActorGroup',
+        attrs: {
+            rect: { width: 140, height: 100, fill: 'white' },
+            //'.local-rect': {height : 20, 'ref': '.uml-class-box-rect', 'ref-width': '100%'},
+            '.uml-class-name-rect': {  height : 20,  transform : 'translate(0,0)', ref:'.uml-class-box-rect', 'ref-width':'100%'},
+            '.uml-class-box-rect': {  height : 80, transform : 'translate(0,20)',ref:'.uml-class-name-rect', 'ref-x':0 , 'ref-y':20},
+            '.uml-class-name-text': {
+                'ref': '.uml-class-name-rect', 'ref-y': .5, 'ref-x': .5, 'text-anchor': 'middle', 'y-alignment': 'middle', 'font-weight': 'bold',
+                'fill': 'white', 'font-size': 12, 'font-family': 'Times New Roman'
+            },
+        },
+    }, joint.shapes.basic.Generic.extend.prototype.defaults),
+
+});
+
+
+
 
 joint.shapes.tm.MyText = joint.shapes.basic.TextBlock.extend({
  toolMarkup: ['<g class="element-tools">',
@@ -93,6 +128,7 @@ joint.shapes.tm.ToolElementView = joint.dia.ElementView.extend({
         var className = evt.target.parentNode.getAttribute('class');
         switch (className) {
             case 'element-tool-remove':
+                console.log('removing element');
                 this.model.remove();
                 return;
                 break;
@@ -104,6 +140,7 @@ joint.shapes.tm.ToolElementView = joint.dia.ElementView.extend({
 
 
 joint.shapes.tm.ActorView = joint.shapes.tm.ToolElementView;
+joint.shapes.tm.ActorGroupView = joint.shapes.tm.ToolElementView;
 joint.shapes.tm.ActorTextView = joint.shapes.tm.ToolElementView;
 
 
@@ -133,7 +170,7 @@ if (cellkind == 3) { var cellcolor =  "#6495ED";}
 var actor = new joint.shapes.tm.Actor({
     position: {x:(300-(Math.max(charL*10,45)))/2, y:40},
     size: { width: Math.max(charL*10,45), height: 40 },
-    attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3 }, 
+    attrs: { rect: { fill: 'transparent', stroke : cellcolor, 'stroke-width': 3}, 
         a: { 'xlink:href': clink,  'xlink:show': 'new', cursor: 'pointer' },
              text: { text: cname,  fill: '#fff' } }
 });
@@ -162,6 +199,7 @@ var actor_d = new joint.shapes.tm.Actor({
 
 
 function onCreateGroup(gg){
+  var grname = document.getElementById("GroupName").value;
   graph0.clear();
   var celldashed = document.getElementById("iscelldashed").checked;
    
@@ -169,18 +207,24 @@ function onCreateGroup(gg){
 if (gg==1) { var gcolor =  "yellow";}
 if (gg==2) { var gcolor =  "#C974FF";}
 
-var actor = new joint.shapes.tm.Actor({
+var actor = new joint.shapes.tm.ActorGroup({
     position: {x:80, y:10},
     size: { width: 140, height: 100 },
-    attrs: { rect: { fill: 'transparent', stroke : gcolor, 'stroke-width': 3 }, 
+    attrs: { rect: { fill: 'transparent', stroke : gcolor, 'stroke-width': 3 },
+    '.uml-class-name-rect': { 'stroke': gcolor, 'stroke-width': 3, 'fill': gcolor, 'fill-opacity':"0.4",height : 20,  transform : 'translate(0,0)'},
+    '.uml-class-box-rect': { 'stroke': gcolor, 'stroke-width': 3, 'fill': 'transparent',height : 80,  transform : 'translate(0,20)', },
+    '.uml-class-name-text': {text: grname},
         a: { cursor: 'pointer' },
            }
 });
 
-var actor_d = new joint.shapes.tm.Actor({
+var actor_d = new joint.shapes.tm.ActorGroup({
     position: {x:80, y:10},
     size: { width: 140, height: 100 },
-    attrs: { rect: { fill: 'transparent', stroke : gcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5" }, 
+    attrs: { rect: { fill: 'transparent', stroke : gcolor, 'stroke-width': 3, 'stroke-dasharray' : "5 5"}, 
+    '.uml-class-name-rect': { 'stroke': gcolor, 'stroke-width': 3, 'fill': gcolor, 'fill-opacity':"0.4" , height : 20,  transform : 'translate(0,0)'},
+    '.uml-class-box-rect': { 'stroke': gcolor, 'stroke-width': 3, 'fill': 'transparent' , height : 80,  transform : 'translate(0,20)'},
+    '.uml-class-name-text': {text: grname},
         a: { cursor: 'pointer' },
        }
 });
@@ -249,6 +293,8 @@ function onCreateLinkClick(lc){
         labels: [{ position: .5, attrs: { 
             text: { text: Lname , 'font-weight': 'bold' , fill: textcolor},
             rect : {fill : '#333'} } }],
+            router: { name: 'manhattan' },
+            connector: { name: 'rounded' },
         attrs: { 
         '.connection': { 'stroke-width': 3, stroke: linecolor },
                 },
@@ -261,6 +307,8 @@ function onCreateLinkClick(lc){
         labels: [{ position: .5, attrs: { 
             text: { text: Lname , 'font-weight': 'bold' , fill: textcolor},
             rect : {fill : '#333'} } }],
+            router: { name: 'manhattan' },
+            connector: { name: 'rounded' },
         attrs: { 
         '.connection': { 'stroke-width': 3, stroke: linecolor, 'stroke-dasharray' : "5 5" },
                 },

@@ -1,13 +1,10 @@
 #!/usr/bin/env python
-import sys,os
-import json
+import sys
 filesvg=sys.argv[1]
-
 
 F=open(filesvg,'r')
 FF=F.readlines()
 F.close()
-
 
 
 New=FF[0][:FF[0].find('><')]+' style=\"background: #333\">\n'

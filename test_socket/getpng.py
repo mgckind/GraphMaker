@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys,os
-import json
 filesvg=sys.argv[1]
 filehtml='temp.html'
 filepng=filesvg[:-4]+'.png'

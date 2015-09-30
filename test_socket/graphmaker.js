@@ -122,17 +122,12 @@ io.on('connection', function(socket){
         fs.writeFile("buffer.svg", msg.svg, function(err) {
     if(err) {return console.log(err);}
     console.log("The svg file was saved!");
-       });
 
-        fs.writeFile("buffer.json", msg.json, function(err) {
-    if(err) {return console.log(err);}
-
-    console.log("The json file was saved!");
     exec('python getpng.py buffer.svg');
     exec('rm -f public/buffer.png');
     cp( 'buffer.png', 'public/buffer.png'); 
-       });
     socket.emit('openpng');
+       });
 
     });
 
@@ -142,14 +137,9 @@ io.on('connection', function(socket){
         fs.writeFile("buffer.svg", msg.svg, function(err) {
     if(err) {return console.log(err);}
     console.log("The svg file was saved!");
-       });
-
-        fs.writeFile("buffer.json", msg.json, function(err) {
-    if(err) {return console.log(err);}
-
-    console.log("The json file was saved!");
     exec('python getsvg.py buffer.svg');
        });
+
 
     });  
 

@@ -91,7 +91,7 @@ paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
 var svgDoc = paperT.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);
-socket.emit('savepng',{svg:svgString, json:JSON.stringify(graph.toJSON())});
+socket.emit('savepng',{svg:svgString});
 };
 
 function svgit(){
@@ -101,22 +101,120 @@ temp=graph.toJSON();
 graphT.fromJSON(temp);
 var els = graphT.getElements();
 console.log(els.length, 'elements');
-for (i = 0; i < els.length; i++) {
-   els[i].attr('text/fill', "red"); 
-};
+//for (i = 0; i < els.length; i++) {
+//   els[i].attr('text/fill', "red"); 
+//};
 var bbox = paperT.getContentBBox();
 paperT.setDimensions(bbox.width+bbox.x*2+30, bbox.height+bbox.y*2+30);
 var svgDoc = paperT.svg;
 var serializer = new XMLSerializer();
 var svgString = serializer.serializeToString(svgDoc);
-socket.emit('modifysvg',{svg:svgString, json:JSON.stringify(graphT.toJSON())});
+var nbreak = svgString.search('><');
+var headline = svgString.slice(0,nbreak);
+headline = headline.concat(' style="background: #333">')
+var rest = svgString.slice(nbreak+1);
+//console.log(headline.concat(mystyles, rest), svgString.length, rest);
+//socket.emit('modifysvg',{svg:svgString});
+//};
+saveAs(new Blob([headline.concat(mystyles, rest)], {type:"application/svg+xml"}), "buffer.svg");
 };
-
-//socket.on('modifysvg', function(msg){
-//saveAs(new Blob([msg.svg], {type:"application/svg+xml"}), "buffer.svg")
-//});
 
 function testit(){
  joint.layout.DirectedGraph.layout(graph);
 };
+
+var mystyles='\
+  <style type="text/css"><![CDATA[ \
+    .connection-wrap { \
+   fill: none; \
+   stroke: black; \
+   stroke-width: 15; \
+   stroke-linecap: round; \
+   stroke-linejoin: round; \
+   opacity: 0; \
+} \
+ \
+.connection { \
+   fill: none; \
+   stroke-linejoin: round; \
+} \
+ \
+.marker-source, .marker-target { \
+   vector-effect: non-scaling-stroke; \
+} \
+ \
+ \
+.marker-vertices { \
+   opacity: 0; \
+} \
+.marker-arrowheads { \
+   opacity: 0; \
+} \
+.link-tools { \
+   opacity: 0; \
+} \
+.link-tools .tool-options { \
+   display: none;      \
+} \
+.link-tools .tool-remove circle { \
+   fill: red; \
+} \
+.link-tools .tool-remove path { \
+   fill: white; \
+} \
+ \
+.marker-vertex { \
+   fill: #1ABC9C; \
+} \
+ \
+.marker-arrowhead { \
+   fill: #1ABC9C; \
+} \
+ \
+.marker-vertex-remove { \
+   opacity: .1; \
+   fill: white; \
+} \
+ \
+.marker-vertex-group:hover .marker-vertex-remove { \
+   opacity: 1; \
+} \
+ \
+.marker-vertex-remove-area { \
+   opacity: .1; \
+} \
+ \
+.highlighted { \
+    opacity: 0.7; \
+} \
+ \
+text.highlighted { \
+    fill: #FF0000; \
+} \
+ \
+@media screen and (-webkit-min-device-pixel-ratio:0) { \
+    .highlighted { \
+        outline: 2px solid #FF0000; \
+        opacity: initial; \
+    } \
+} \
+ \
+.element .fobj { \
+    overflow: hidden; \
+} \
+.element .fobj body { \
+    background-color: transparent; \
+    margin: 0px; \
+} \
+.element .fobj div { \
+    text-align: center; \
+    vertical-align: middle; \
+    display: table-cell; \
+    padding: 0px 5px 0px 5px; \
+} \
+.element .element-tools { \
+        display: none; \
+} \
+ \
+  ]]></style> ';
 
