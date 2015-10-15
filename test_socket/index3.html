@@ -50,6 +50,7 @@ var saved = true;
 <input type="file" id="theFile"/>
 
 <button onclick="testit()"> Test</button><br>
+<button onclick="newroom()"> New space</button><br>
 
 </div>
 
@@ -675,6 +676,14 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
 }
    });
 
+    socket.on('moveroom', function (text) {
+        window.location.replace("/"+text);
+    });
+
+    socket.on('nomoveroom', function (text) {
+        alert('Can not create new rooms '+ text);
+    });
+
 
    graph.on('add', function(cell){
     socket.emit('addCell',cell);
@@ -683,6 +692,8 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
    graph.on('remove', function(cell){
     socket.emit('removeCell',cell);
    });
+
+
 
 </script>
 </body>

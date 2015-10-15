@@ -4,11 +4,13 @@ var app = express();
 var fs = require('fs');
 
 //var app = require('express')();
-var http = require('http').Server(app);
+var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
 var joint = require('jointjs');
 var graph = new joint.dia.Graph;
+
+var newpages = [];
 
 app.use(express.static(__dirname + '/public'));
 
@@ -130,6 +132,23 @@ io.on('connection', function (socket){
        });
 
     });
+
+
+    socket.on('newroom', function (text){
+        console.log(text);
+        console.log(newpages.length);
+        if (newpages.length < 30){
+          newpages.push(text);
+          app.get('/'+text, function (req, res) {
+            res.sendfile(__dirname + '/index3.html');
+              });
+          socket.emit('moveroom', text);
+        }
+        else {
+            socket.emit('nomoveroom', newpages);
+        }
+    });
+
 
     
     socket.on('modifysvg', function(msg){
