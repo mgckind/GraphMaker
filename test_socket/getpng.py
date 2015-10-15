@@ -144,6 +144,6 @@ Lineshtml+="""
 F2.write(Lineshtml)
 F2.close()
 
-os.system("/Users/Matias/phantomjs/bin/phantomjs /Users/Matias/phantomjs/examples/rasterize.js temp.html "+filepng+' '+ww+'px*'+hh+'px')
+os.system("phantomjs rasterize.js temp.html "+filepng+' '+ww+'px*'+hh+'px')
 os.system("rm -f "+filehtml)
 #os.system("rm -f "+filesvg)
