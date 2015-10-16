@@ -341,6 +341,10 @@ $('#isdashed').on('change', function() {
 
 var socket = io();
 
+    socket.on('connect', function(){
+        // call the server-side function 'adduser' and send one parameter (value of prompt)
+        socket.emit('shakehand', window.location.pathname);
+    });
 
 var x00 = 0;
 var y00 = 0;
