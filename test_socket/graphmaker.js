@@ -149,7 +149,7 @@ io.on('connection', function (socket){
     socket.on('newroom', function (text){
         console.log(text);
         console.log(newpages.length);
-        if (newpages.length < 30){
+        if (newpages.length < 50){
           newpages.push(text);
           app.get('/'+text, function (req, res) {
             res.sendfile(__dirname + '/index3.html');
