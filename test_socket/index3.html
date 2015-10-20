@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <meta name="viewport" content="minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 body {
     background-color: #333;
@@ -237,6 +240,8 @@ var paperT = new joint.dia.Paper({
 });
 
 
+/*
+//add a static line to graph
 var l1 = g.line(g.point(0, 100), g.point(1800, 100));
 var hrr = V('<line/>');
 hrr.attr({ 
@@ -244,7 +249,7 @@ hrr.attr({
 });
 //V(paper.viewport).append(hrr);
 //V(paper.svg).remove(hrr);
-
+*/
 
 
 var papersmall = new joint.dia.Paper({
@@ -346,6 +351,57 @@ var socket = io();
         socket.emit('shakehand', window.location.pathname);
     });
 
+paper0.on('cell:pointerup',function (element, evt, x, y) {
+        var cell = element.model;
+        cell2 = cell.clone();
+        if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
+            var pos_x=Math.max(0,x);
+            var pos_y=Math.max(100,y-130);
+        cell2.position(pos_x,pos_y);
+        }
+        else {
+        cell2.set('source', { x: Math.max(0,x), y: Math.max(10,y-130) });
+        cell2.set('target', { x: Math.max(160,x+160), y: Math.max(30,y-130+20) });
+        }
+        graph.addCells([cell2]);
+        $( ".box" ).remove();
+        graph0.clear();
+        document.getElementById("mytext").innerHTML = "INFO:"
+        socket.emit('savegraph',{json:graph.toJSON()});
+    });
+
+ paper0.on('cell:pointerdown',function (element, evt, x, y) {
+        var cell = element.model;
+        cell3 = cell.clone();
+        $('body').append('<div id="tempPaper" class="box" style="position: fixed;z-index: 100;display:block;opacity:.7;"></div>');
+        var graph3 = new joint.dia.Graph;
+        var paper3 = new joint.dia.Paper({
+            el: $('#tempPaper'),
+            width: 300,
+            height: 120,
+            model: graph3,
+            gridSize: 1
+        });
+        if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
+        cell3.position(0,0);
+        }
+        else {
+        cell3.set('source', { x: 0, y: 0 });
+        cell3.set('target', { x: 160, y: 20 });
+        }
+        graph3.addCells([cell3]);
+        $('body').mousemove(function(e){
+            var mouseX   =  e.pageX; //get mouse move position
+            var mouseY   =  e.pageY;
+            $( "div.box" ).offset({ top: mouseY, left: mouseX });
+            // $('div.box',this).css({'top': boxPositionY,'left': boxPositionX})
+        });
+
+    });
+
+
+
+
 var x00 = 0;
 var y00 = 0;
 var w00 = 0;
@@ -375,32 +431,40 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
 
     //console.log(cell.id, ':', cell.prop('name/text'));
 
-    if (!cell.get('embeds') || cell.get('embeds').length === 0) {
+      if (!cell.get('embeds') || cell.get('embeds').length === 0) {
+         //Show the dragged element above all the other cells (except when the
+         //element is a parent).
         cell.toFront();
     }
-    else if (cell.prop('name/text') == 'Group'  && cell.get('parent')) {
-        cell.toFront;
-    }
+    //cell.toFront({deep: true});
+
+    //if (cell.prop('name/text') == 'Cell') {
+    //    cell.toFront();
+    //}
+
+    //if (cell.prop('name/text') == 'Group') {
+    //    cell.toFront();
+    //}
     
-    if (cell.get('parent')) {
+    if (cell.get('parent') ) {
         graph.getCell(cell.get('parent')).unembed(cell);
     }
 
-    if (cell.prop('name/text') == 'Group' )  {
-    var inside= graph.findModelsUnderElement(cell);
+    if ((cell.prop('name/text') == 'Group')  && (cell !== undefined))   { 
+    var inside= cell.getEmbeddedCells();
      console.log(cell.getBBox(), inside.length );
      if (inside.length > 0) {
         for (i = 0; i < inside.length; i++) { 
              if (inside[i].get('parent') !== cell.id){
-             //cell.embed(inside[i]);
+             cell.unembed(inside[i]);
              //inside[i].toFront();
                     }
             }
-           // cell.toBack();
+            cell.toFront({deep: true});
         }
    }
 
-   socket.emit('selectCell',{id:cell.id});
+   //socket.emit('selectCell',{id:cell.id});
 
 
     if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
@@ -432,7 +496,7 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
     socket.emit('busy');
     var cell = element.model;
     if (cell.prop('name/text') == 'Link'){
-        cell.toFront();
+        //cell.toFront();
         socket.emit('moveLink',{id:cell.id, source:cell.get('source'), target:cell.get('target'), vertices:cell.get('vertices')});
     }
     var pos=cell.get('position');
@@ -466,7 +530,8 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
 
 
 paper.on('cell:pointerup', function(element,eve,x,y) {
-    socket.emit('free');
+    
+    
     var cell = element.model;
     if (cell.prop('name/text') == 'Link' ){
         cell.toFront();
@@ -475,9 +540,11 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
     } 
     resize00 = false;
 
+
     if (cell.prop('name/text') == 'Group' )  {
     cell.toFront();
-    var inside= graph.findModelsUnderElement(cell);
+    var inside= graph.findModelsUnderElement(cell, {searchBy : 'bbox'});
+
      console.log(cell.getBBox(), inside.length );
      if (inside.length > 0) {
         for (i = 0; i < inside.length; i++) { 
@@ -487,62 +554,37 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
                     }
             }
         }
-            cell.toBack();
-        socket.emit('upGroup',{id:cell.id, inside: inside, x:cell.get('position').x, y:cell.get('position').y});
+    if (!cell.get('embeds') || cell.get('embeds').length === 0){
+       var jjj = 0;
+    }
+    else {   
+    cell.toBack({deep: true});
+}
+
+        //socket.emit('upGroup',{id:cell.id, inside: inside, x:cell.get('position').x, y:cell.get('position').y});
    }
-   if (cell.prop('name/text') == 'Cell' )  {
-    socket.emit('upCell',{id:cell.id, x:cell.get('position').x, y:cell.get('position').y});
+   
+
+   if (cell.prop('name/text') == 'Cell')  {
+    cell.toFront();
+    var inside= graph.findModelsUnderElement(cell, {searchBy: 'origin'});
+    console.log(inside.length,' under me')
+    if (inside.length > 0) {
+        for (i = 0; i < inside.length; i++) { 
+             if (inside[i].get('parent') !== cell.id){
+             inside[i].embed(cell);
+             console.log('embeding ',cell.id)
+             //inside[i].toFront();
+                    }
+            }
+        }
+    //socket.emit('upCell',{id:cell.id, x:cell.get('position').x, y:cell.get('position').y});
    }
+   socket.emit('savegraph',{json:graph.toJSON()});
+   socket.emit('free');
 
 });
 
-
-paper0.on('cell:pointerup',function (element, evt, x, y) {
-        var cell = element.model;
-        cell2 = cell.clone();
-        if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
-            var pos_x=Math.max(0,x);
-            var pos_y=Math.max(100,y-130);
-        cell2.position(pos_x,pos_y);
-        }
-        else {
-        cell2.set('source', { x: Math.max(0,x), y: Math.max(10,y-130) });
-        cell2.set('target', { x: Math.max(160,x+160), y: Math.max(30,y-130+20) });
-        }
-        graph.addCells([cell2]);
-        $( ".box" ).remove();
-        graph0.clear();
-        document.getElementById("mytext").innerHTML = "INFO:"
-    });
-
- paper0.on('cell:pointerdown',function (element, evt, x, y) {
-        var cell = element.model;
-        cell3 = cell.clone();
-        $('body').append('<div id="tempPaper" class="box" style="position: fixed;z-index: 100;display:block;opacity:.7;"></div>');
-        var graph3 = new joint.dia.Graph;
-        var paper3 = new joint.dia.Paper({
-            el: $('#tempPaper'),
-            width: 300,
-            height: 120,
-            model: graph3,
-            gridSize: 1
-        });
-        if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
-        cell3.position(0,0);
-        }
-        else {
-        cell3.set('source', { x: 0, y: 0 });
-        cell3.set('target', { x: 160, y: 20 });
-        }
-        graph3.addCells([cell3]);
-        $('body').mousemove(function(e){
-            var mouseX   =  e.pageX; //get mouse move position
-            var mouseY   =  e.pageY;
-            $( "div.box" ).offset({ top: mouseY, left: mouseX });
-            // $('div.box',this).css({'top': boxPositionY,'left': boxPositionX})
-        });
-
-    });
 
    socket.on('load', function(ghjson){
     graph.fromJSON(ghjson);

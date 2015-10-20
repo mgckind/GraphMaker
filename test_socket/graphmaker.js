@@ -54,13 +54,10 @@ io.on('connection', function (socket){
     });
 
     socket.on('addCell', function(cell){
-        socket.graph.addCells([cell]);
         socket.broadcast.to(socket.room).emit('addCell',cell);
     });
     
     socket.on('removeCell', function(cell){
-        oldCell = socket.graph.getCell(cell.id);
-            if (oldCell) {oldCell.remove();}
         socket.broadcast.to(socket.room).emit('removeCell',cell.id);
     });
 
@@ -73,63 +70,30 @@ io.on('connection', function (socket){
     });
     
     socket.on('upLink', function(msg){
-        mLink = socket.graph.getCell(msg.id);
-    if (msg.vertices !== undefined){
-        mLink.set('vertices',msg.vertices);
-    }
-
-        if (msg.source.id === undefined){
-        mLink.set('source',{x:msg.source.x, y:msg.source.y});
-    }
-    else{
-        mLink.set('source',{id:msg.source.id});
-    }
-    if (msg.target.id === undefined){
-        mLink.set('target',{x:msg.target.x, y:msg.target.y});
-    }
-    else{
-        mLink.set('target',{id:msg.target.id});
-    }
         socket.broadcast.emit('upLink',msg);
     });
 
-        socket.on('upCell', function(msg){
-        mCell = socket.graph.getCell(msg.id);
-        mCell.translate(msg.x-mCell.get('position').x, msg.y-mCell.get('position').y);
-    });
-    
+
     socket.on('upGroup', function(msg){
-        mCell = socket.graph.getCell(msg.id);
-        /*
-        var inside= msg.inside;
-        console.log(inside.length,inside[0].id);
-        if (inside.length > 0) {
-        for (i = 0; i < inside.length; i++) { 
-             if (inside[i].get('parent') !== mCell.id){
-             mCell.embed(inside[i]);
-             //inside[i].toFront();
-                    }
-            }
-            mCell.toBack();
-        }
-        */
-        mCell.translate(msg.x-mCell.get('position').x, msg.y-mCell.get('position').y);
         socket.broadcast.to(socket.room).emit('upGroup',msg);
     });
     
     socket.on('resizeCell', function(msg){
-        mCell = socket.graph.getCell(msg.id);
-        var inside= mCell.getEmbeddedCells();
-        for (i = 0; i < inside.length; i++) {
-        mCell.unembed(inside[i]);
-    };
-    mCell.position(msg.x,msg.y);
-    mCell.resize(msg.w,msg.h);
         socket.broadcast.to(socket.room).emit('resizeCell',msg);
     });
     
     socket.on('selectCell', function(msg){
         socket.broadcast.to(socket.room).emit('selectCell',msg);
+    });
+
+    socket.on('savegraph', function(msg){
+        socket.graph.fromJSON(msg.json);
+        socket.broadcast.to(socket.room).emit('load',socket.graph.toJSON());
+    });
+
+    socket.on('testdagre', function(msg){
+        socket.graph.fromJSON(msg.json);
+        socket.broadcast.to(socket.room).emit('load',socket.graph.toJSON());
     });
 
     socket.on('savepng', function(msg){

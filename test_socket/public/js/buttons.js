@@ -138,6 +138,7 @@ saveAs(new Blob([headline.concat(mystyles, rest)], {type:"application/svg+xml"})
 
 function testit(){
  joint.layout.DirectedGraph.layout(graph);
+ socket.emit('testdagre',{json:graph.toJSON()});
 };
 
 var mystyles='\
