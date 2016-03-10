@@ -1,21 +1,21 @@
 # GraphMaker
 
-A little graph manipulation tool written in javascript, based heavily in joint.js. Still under development
+A little graph manipulation tool written in javascript, based in joint.js. Still under development. Tested on all browsers, works better in Chrome.
 
 ## Live Demo
-[Here](http://mgckind.pythonanywhere.com/) you can see a live demo!
+[Here](http://matias-ck.com/graph/) you can see a live demo with some of the features!
 
 ## Requirements
 
-- [Phantom.js](http://phantomjs.org/)
-- [Joint.js](http://www.jointjs.com/)
-- [Graphviz](http://www.graphviz.org/)
-- [Node.js](https://nodejs.org/en/)
-- [Socket.io](http://socket.io/)
+- [Phantom.js](http://phantomjs.org/) (To save graph to png)
+- [Joint.js](http://www.jointjs.com/) (Base library)
+- [Graphviz](http://www.graphviz.org/) (convert json to dot file)
+- [Node.js](https://nodejs.org/en/) (To use websockets)
+- [Socket.io](http://socket.io/)  (To use web sockets)
 
 ## Use
 
-Run a server, with for example in python 2.* :
+Run a web server, (in python 2.*, for example) :
 
     python -m SimpleHTTPServer
 
@@ -23,7 +23,7 @@ Or in python 3.* :
 
     python3 -m http.server
 
-and go to: http://localhost:8000/
+and go to: http://localhost:8000/ (or the port used for the server)
 
 In oder run with node.js and make use of websockets need to install npm_modules inside test_socket/
 
@@ -35,12 +35,12 @@ then inside test_socket/:
 
 ## Features
 
-- Can save json file
-- Can save svg
-- Can save png
-- Convert from json to dot file
-- Drag & Drop
-- Direct graph testing (in progress)
+- Can save json file of the graph
+- Can save to svg
+- Can save to png
+- Convert from json to dot file and recreate graph using GraphViz (dot)
+- Drag & Drop 
+- Direct graph Layout testing (in progress)
 
 ## Other tools
 
