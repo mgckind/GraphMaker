@@ -23,7 +23,6 @@ body {
 <script type="text/javascript" src="/js/graphlib.js"></script>
 <script type="text/javascript" src="/js/joint.layout.DirectedGraph.js"></script>
 <script type="text/javascript" src="/js/elements.js"></script>
-<script type="text/javascript" src="/js/socket.io-1.2.0.js"></script>
 
 <script>
 var linkkind=1;
@@ -262,11 +261,11 @@ $("#openfile").click(function(){
 document.getElementById('theFile').addEventListener('change', onFileChange);
 
 // Load it automatically
-$(document).ready(function () {
-   socket.on('load0', function(ghjson){
-    graph.fromJSON(ghjson);
-  });
-});
+//$(document).ready(function () {
+//   socket.on('load0', function(ghjson){
+//    graph.fromJSON(ghjson);
+///  });
+//});
 
 //graph.on('all', function(eventName, cell) {
 //    console.log(arguments);
@@ -338,7 +337,6 @@ $('#isdashed').on('change', function() {
 });
 
 
-var socket = io();
 
 
 var x00 = 0;
@@ -395,7 +393,6 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
         }
    }
 
-   socket.emit('selectCell',{id:cell.id});
 
 
     if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
@@ -424,17 +421,14 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
 
 
 paper.on('cell:pointermove', function(element,eve,x,y) {
-    socket.emit('busy');
     var cell = element.model;
     if (cell.prop('name/text') == 'Link'){
         cell.toFront();
-        socket.emit('moveLink',{id:cell.id, source:cell.get('source'), target:cell.get('target'), vertices:cell.get('vertices')});
     }
     var pos=cell.get('position');
     var inside= cell.getEmbeddedCells();
     if  (~resize00){
     if ((cell.prop('name/text') == 'Group') || (cell.prop('name/text') == 'Cell') ) {
-         socket.emit('moveCell',{id:cell.id, x:pos.x, y:pos.y, name: cell.prop('name/text'), x0:x00, y0:y00, x1:x, y2:y});
     };
         }
 
@@ -453,7 +447,6 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
             cell.position(Math.min(x00,x),Math.min(y,y00+h00));
             cell.resize(Math.abs(x-x00), Math.abs(y00+h00-y));}
 
-    socket.emit('resizeCell',{id:cell.id, x:cell.get('position').x, y:cell.get('position').y, w:cell.get('size').width, h:cell.get('size').height});
     }
     //console.log(cell.id, ':', cell.get('position'), x,y);
 
@@ -461,12 +454,10 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
 
 
 paper.on('cell:pointerup', function(element,eve,x,y) {
-    socket.emit('free');
     var cell = element.model;
     if (cell.prop('name/text') == 'Link' ){
         cell.toFront();
         console.log(cell.get('selector'));
-        socket.emit('upLink',{id:cell.id, source:cell.get('source'), target:cell.get('target'), vertices:cell.get('vertices')});
     } 
     resize00 = false;
 
@@ -483,10 +474,8 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
             }
         }
             cell.toBack();
-        socket.emit('upGroup',{id:cell.id, inside: inside, x:cell.get('position').x, y:cell.get('position').y});
    }
    if (cell.prop('name/text') == 'Cell' )  {
-    socket.emit('upCell',{id:cell.id, x:cell.get('position').x, y:cell.get('position').y});
    }
 
 });
@@ -539,150 +528,6 @@ paper0.on('cell:pointerup',function (element, evt, x, y) {
 
     });
 
-   socket.on('load', function(ghjson){
-    graph.fromJSON(ghjson);
-  });
-
-   socket.on('addCell', function(Newcell){
-    graph.addCells([Newcell]);
-   });
-
-    socket.on('busy', function(){
-    var div = document.getElementById('mytext');
-    div.innerHTML = ' </br> &nbsp; &nbsp; &nbsp;  Working...';
-   });
-    
-    socket.on('free', function(){
-    var div = document.getElementById('mytext');
-    div.innerHTML = "INFO:";
-   });
-   
-   socket.on('moveCell', function(msg){
-    mCell = graph.getCell(msg.id);
-    mCell.translate(msg.x-mCell.get('position').x, msg.y-mCell.get('position').y);
-   });
-   
-   socket.on('moveLink', function(msg){
-    mLink = graph.getCell(msg.id);
-
-    if (msg.vertices !== undefined){
-        mLink.set('vertices',msg.vertices);}
-    if (msg.source.id === undefined){
-        mLink.set('source',{x:msg.source.x, y:msg.source.y});
-    }
-    else{
-        mLink.set('source',{id:msg.source.id});
-    }
-    if (msg.target.id === undefined){
-        mLink.set('target',{x:msg.target.x, y:msg.target.y});
-    }
-    else{
-        mLink.set('target',{id:msg.target.id});
-    }
-    mLink.toFront();
-
-   });
-
-    socket.on('upLink', function(msg){
-    mLink = graph.getCell(msg.id);
-    if (msg.vertices !== undefined){
-        mLink.set('vertices',msg.vertices);
-    }
-
-        if (msg.source.id === undefined){
-        mLink.set('source',{x:msg.source.x, y:msg.source.y});
-    }
-    else{
-        mLink.set('source',{id:msg.source.id});
-    }
-    if (msg.target.id === undefined){
-        mLink.set('target',{x:msg.target.x, y:msg.target.y});
-    }
-    else{
-        mLink.set('target',{id:msg.target.id});
-    }
-    mLink.toFront();
-
-    //mLink2 = mLink.clone();
-    //graph.resetCells(mLink2);
-    //mLink.remove();
-    //graph.addCells([mLink2]);
-
-   });
-
-
-    socket.on('upGroup', function(msg){
-        mCell = graph.getCell(msg.id);
-        var inside= graph.findModelsUnderElement(mCell);
-     if (inside.length > 0) {
-        for (i = 0; i < inside.length; i++) { 
-             if (inside[i].get('parent') !== mCell.id){
-             mCell.embed(inside[i]);
-             //inside[i].toFront();
-                    }
-            }
-            mCell.toBack();
-        }
-    });
-   
-   socket.on('resizeCell', function(msg){
-    mCell = graph.getCell(msg.id);
-    var inside= mCell.getEmbeddedCells();
-        for (i = 0; i < inside.length; i++) {
-        mCell.unembed(inside[i]);
-    };
-    mCell.position(msg.x,msg.y);
-    mCell.resize(msg.w,msg.h);
-   });
-   
-   socket.on('removeCell', function(OldId){
-    oldCell = graph.getCell(OldId);
-    if (oldCell) {oldCell.remove();}
-   });
-
-   socket.on('clear', function(){
-    graph.clear();
-   });
-
-    socket.on('openpng', function(){
-    window.open('/buffer.png'); 
-   });
-    
-   socket.on('selectCell', function(selId){
-    selectCell = graph.getCell(selId.id);
-    if ((selectCell.prop('name/text') == 'Group') || (selectCell.prop('name/text') == 'Cell') ){
-    selectCell = graph.getCell(selId.id);
-        if (!selectCell.get('embeds') || selectCell.get('embeds').length === 0) {
-        selectCell.toFront();
-    }
-    
-    if (selectCell.get('parent')) {
-        graph.getCell(selectCell.get('parent')).unembed(selectCell);
-    }
-
-    if (selectCell.prop('name/text') == 'Group' )  {
-    var inside= graph.findModelsUnderElement(selectCell);
-     if (inside.length > 0) {
-        for (i = 0; i < inside.length; i++) { 
-             if (inside[i].get('parent') !== selectCell.id){
-             selectCell.embed(inside[i]);
-             //inside[i].toFront();
-                    }
-            }
-            selectCell.toBack();
-        }
-   }
-}
-   });
-
-
-   graph.on('add', function(cell){
-    socket.emit('addCell',cell);
-   });
-
-   graph.on('remove', function(cell){
-    socket.emit('removeCell',cell);
-   });
 
 </script>
 </body>
