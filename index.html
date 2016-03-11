@@ -396,7 +396,7 @@ paper.on('cell:pointerdown', function(element, ev, x,y) {
 
 
     if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
-        console.log('Corner0!', x, pos.x);
+        console.log('Corner0!', x, pos.x, ev.offsetX);
         resize00 = true;
         corner = 0;
     }
@@ -436,7 +436,7 @@ paper.on('cell:pointermove', function(element,eve,x,y) {
     for (i = 0; i < inside.length; i++) {
         cell.unembed(inside[i]);
     };
-        if (corner ==0){ 
+        if (corner ==0){
             cell.position(Math.min(x00,x),Math.min(y00,y));  
             cell.resize(Math.abs(x-x00), Math.abs(y-y00));
         }
@@ -462,6 +462,7 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
     resize00 = false;
 
     if (cell.prop('name/text') == 'Group' )  {
+    cell.attr('rect/cursor','move');
     cell.toFront();
     var inside= graph.findModelsUnderElement(cell);
      console.log(cell.getBBox(), inside.length );
@@ -479,6 +480,37 @@ paper.on('cell:pointerup', function(element,eve,x,y) {
    }
 
 });
+
+
+paper.on('cell:mouseover', function(element,eve) {
+    var cell = element.model;
+    var x  = eve.offsetX
+    var y  = eve.offsetY
+    var pos=cell.get('position');
+    var size=cell.get('size');
+    if (((x-pos.x) > size.width-20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
+        cell.attr('rect/cursor','se-resize');
+    }
+
+    else if (((x-pos.x) < 20) && ( (y-pos.y) > size.height-20) &&  (cell.prop('name/text') == 'Group')) {
+        cell.attr('rect/cursor','sw-resize');
+    }
+    else if (((x-pos.x) > size.width-20) && ( (y-pos.y) < 20) &&  (cell.prop('name/text') == 'Group')) {
+        cell.attr('rect/cursor','ne-resize');
+    }
+    else {
+        cell.attr('rect/cursor','move');
+        }
+
+});
+
+paper.on('cell:contextmenu', function(element,eve,x,y) {
+    var cell = element.model;
+    eve.preventDefault();
+    console.log(x,y,' ritgh click!');
+});
+
+
 
 
 paper0.on('cell:pointerup',function (element, evt, x, y) {
