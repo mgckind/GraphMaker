@@ -1,0 +1,2 @@
+docker run -d -p 80:80 graphmaker /bin/bash -c "python -m SimpleHTTPServer 80"
+docker run -d -p 80:3000 graphmaker /bin/bash -c "node graphmaker.js"
