@@ -45,5 +45,5 @@ RUN cd /test/GraphMaker
 RUN cd /test/GraphMaker/test_socket
 WORKDIR /test/GraphMaker/test_socket
 RUN npm install 
-
+CMD ["node","graphmaker.js"]
 
